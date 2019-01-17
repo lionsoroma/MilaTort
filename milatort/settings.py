@@ -72,7 +72,7 @@ MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = 'khrystyna.ivanyna@gmail.com'
-EMAIL_HOST_PASSWORD = '3ANVjHaYmtYE'
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASSWORD')
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'MilaTort Team <noreply@example.com>'
