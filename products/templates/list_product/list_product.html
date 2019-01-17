@@ -1,0 +1,73 @@
+{% extends 'products/products.html' %}
+{% load staticfiles %}
+{% load static %}
+{% load previous %}
+
+{% block title %}
+        MilaTort - {{ title_of_type }}
+{% endblock %}
+
+{% block content %}
+
+    <link rel="stylesheet" type="text/css" href="{% static 'css/list_product.css' %}">
+    <div class="titles">
+        <h2>{{ title_of_type.typeof }}</h2>
+        <div class="lines clearfix">
+            <img src={% static 'img/line.png' %} id="line-left">
+            <img src={% static 'img/line.png' %} id="line-right">
+        </div>
+        <h3 class="clearfix">{{ title_of_type.category }}</h3>
+        {% if title_of_type.category.disclaimer_is_visible %}
+            <p>{{ title_of_type.category.disclaimer }}</p>
+        {% endif %}
+    </div>
+    <div class="product_of_list">
+    {% for product in product_of_type %}
+        <div class="product_card">
+            <div class="main_content">
+                {% if product.discount_product %}
+                    <div class="ribbon-discount"><span>знижка {{ product.discount_product }}%</span></div>
+                {% endif %}
+                {% if product.get_new_arrival %}
+                    <div class="ribbon-new_arrival"><span>новинка!</span></div>
+                {% endif %}
+                <a href="{% url 'details_product' slug=product.slug_product %}">
+                    <div class="pic_photo" title="Детально для {{ product.category_plus_type_product }}: {{ product.name }}">
+                            {%  with photos_of_product|prev:forloop.counter0 as photo_of_product %}
+                                <img src="{{ photo_of_product.photo.url }}">
+                            {% endwith %}
+                    </div>
+                 </a>
+            </div>
+            <footer class="slave_content">
+                <p>{{ product.name|striptags|truncatechars:14 }}
+                    {% if product.category_plus_type_product.category.is_staff %}
+                    +
+                    {% else %}
+                    -
+                    {% endif %}
+                    {{ product.price }} грн. за 1 {{ product.get_unit_display }}</p>
+                <form class="insert_data" action="{% url 'order' %}" id="{{ product.id }}"
+                        data-id_form = "{{ product.id }}" data-change_weight_or_pcs_order="None" > <!--data-update_value="false"-->
+                    <label for="{{ product.slug_product }}">Вага чи кількість</label>
+                    <input id="{{ product.slug_product }}"
+                           type="number"
+                           min="2"
+                           step="0.1"
+                           maxlength="8"
+                           size="8"
+                           placeholder="від 2 кг/шт">
+                    <button type="submit"
+                        class="in_cart
+                        {% if product.category_plus_type_product.category.is_staff %}
+                            {{ 'non-active-order' }}
+                        {% endif %}
+                        "><span
+                        class="cart_on_button" >&#xf291;&nbsp&nbsp</span>&nbspВ кошик
+                    </button>
+                </form>
+            </footer>
+        </div>
+    {% endfor %}
+    </div>
+{% endblock %}

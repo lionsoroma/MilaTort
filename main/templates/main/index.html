@@ -1,0 +1,454 @@
+{% load static %}
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>MilaTort</title>
+    <!--ICON-->
+    <link rel="apple-touch-icon" sizes="180x180" href={% static 'img/favicon_package_v0.16/apple-touch-icon.png' %}>
+    <link rel="icon" type="image/png" sizes="32x32" href={% static 'img/favicon_package_v0.16/favicon-32x32.png' %}>
+    <link rel="icon" type="image/png" sizes="16x16" href={% static 'img/favicon_package_v0.16/favicon-16x16.png' %}>
+    <link rel="manifest" href={% static 'img/favicon_package_v0.16/site.webmanifest' %}>
+    <link rel="mask-icon" href={% static 'img/favicon_package_v0.16/safari-pinned-tab.svg' %} color='#5bbad5'>
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
+    <!--CSS-->
+    <link rel="stylesheet" type="text/css" href="{% static 'css/owl.carousel.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/owl.theme.default.min.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/mobile.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/font.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/input.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/inputmask.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/jquery-confirm.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/loader_animation.css' %}">
+</head>
+<body>
+    <div class="loading_main none_display_main">Loading&#8230;</div>
+    <div id="test" class="buttonHolder">
+        <a class="button-top call" title='Подзвонити' href='tel:+380982549248'></a>
+    </div>
+    <header>
+        <div class="container-wrapper">
+            <div id="wrapper">
+                <div id="slider-area" class="owl-carousel">
+                    {% for land_photo in land_photos %}
+                        <div style="background-image: url({{ land_photo.photo.url }})"></div>
+                    {% endfor %}
+                </div>
+                <div id="nav-area">
+                    <div class="slider-text">
+                        <h1>&nbspMila&nbsp</h1>
+                        <p>&nbspTort&nbsp</p>
+                    </div>
+                    <div class="nav">
+                        <a href="#whywe">Чому ми?</a>
+                         {% for category in categories %}
+                             <a href="#{{ category.slug_category }}">{{ category.category }}</a>
+                         {% endfor %}
+                        <a href="#contacts">Контакти</a>
+                    </div>
+                </div>
+                <div class="menu">
+                    <div class="slider-menu">
+                        <h1>Mila</h1>
+                        <p>Tort&nbsp</p>
+                    </div>
+                    <div id="menu-icons" class="menu-icon" onclick="myFunction(this)">
+                      <div class="bar1"></div>
+                      <div class="bar2"></div>
+                      <div class="bar3"></div>
+                    </div>
+                    <div id="dropdown" class="nav-hidden">
+                        <a href="#whywe">Чому ми?</a>
+                        {% for category in categories %}
+                             <a href="#{{ category.slug_category }}">{{ category.category }}</a>
+                         {% endfor %}
+                        <a href="#contacts">Контакти</a>
+                    </div>
+                    <script>
+                    function myFunction(x) {
+                        x.classList.toggle("change");
+                        document.getElementById("dropdown").classList.toggle("show");
+                    }
+                    window.onclick = function(event) {
+                      if (!event.target.matches('.menu-icon')) {
+
+                        let dropdowns = document.getElementsByClassName("nav-hidden");
+                        let menuicons = document.getElementById("menu-icons");
+                        let i;
+                        for (i = 0; i < dropdowns.length; i++) {
+                          let openDropdown = dropdowns[i];
+                          if (openDropdown.classList.contains('show')) {
+                            openDropdown.classList.remove('show');
+                          }
+                        }
+                       if ( menuicons.classList.contains("change")){
+                             menuicons.classList.remove("change");
+                       }
+                      }
+                    }
+                    </script>
+                </div>
+            </div>
+        </div>
+        <script src="{%  static 'js/jquery-3.3.1.min.js' %}"></script>
+        <script src="{%  static 'js/owl.carousel.min.js' %}"></script>
+        <script>
+            let owl = $('#slider-area');
+            owl.owlCarousel({
+                items: 1,
+                loop: true,
+                autoplay: true,
+                autoplayTimeout: 5000,
+                autoplaySpeed: 1000,
+                autoplayHoverPause: true,
+            });
+            $('#slider-area').mouseenter(function() {
+                owl.trigger('play.owl.autoplay', [5000]);
+            });
+            $('#slider-area').mouseleave(function() {
+                owl.trigger('play.owl.autoplay', [5000]);
+            })
+        </script>
+    </header>
+    <section>
+        <div class="container-background">
+            <div id="whywe" class="welcome">
+                <h2>Ласкаво просимо</h2>
+                <h3>до першої приватної кондитерської</h3>
+                <p>Ми використовуємо лише свіжі натуральні продукти, що створює неперевершений смак наших виробів. Це не просто красиво а дійсно смачно. Будемо раді бачити Вас серед наших клієнтів. І це ще не все...</p>
+            </div>
+            <div class="chef">
+                <img src={% static 'img/photo_noback.png' %} alt="chef" class="photo">
+                <p>Mila Ivanyna - Кондитер</p>
+            </div>
+        </div>
+    </section>
+    <section>
+        <div class="container-experience">
+            <div class="experience-img">
+                <img src={% static 'img/sec3_blur.jpg' %} alt="tort">
+            </div>
+            <div class="experience-text">
+                <h2>Досвід</h2>
+                <h3>Понад 10 років...</h3>
+                <p>Ми даруємо людям солодку радість. Перевірені часом рецепти кращих десертів світу. Ніжне тірамісу, еклери, витончені макаронси, українські “горішки”, панакота, тістечка Шу, натуральний мармелад, органік зефір і багато іншого.</p>
+            </div>
+        </div>
+    </section>
+    <section>
+        <div class="container-cooking" id="imagefirst">
+            <div class="cooking">
+                <h2>Лише професійне обладнання</h2>
+                <h3>кращих світових брендів</h3>
+                <p>Тисячі задоволених клієнтів. incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidata.</p>
+            </div>
+        </div>
+    </section>
+    <section>
+         <div class="container">
+         {% load previous %}
+            {% for category in categories%}
+                 <div id='{{ category.slug_category }}' class="titles">
+                         <h2>{{ category.category }}</h2>
+                                <div class="lines">
+                                    <img src={% static 'img/line.png' %} id="line-left">
+                                    <img src={% static 'img/line.png' %} id="line-right">
+                                </div>
+                         <h3>{{ category.motto }}</h3>
+                         <div class="torty">
+                            <img src={{ category.photo.url }}>
+                         </div>
+                 </div>
+                    <div class="price clearfix">
+                        {% for type in types %}
+                          {% if category.category == type.category.category %}
+                               <div class="text-all">
+                               {%  with min_prices|prev:forloop.counter0 as min_price %}
+                                    <a href="{% url 'list_product' slug=type.slug_type %}" class="headtext"><span class="name-value">{{ type.typeof }} (за 1 {{ min_price.get_unit_display }})</span>
+                                        <span class="dots">.......................................................................................................................................................................................................................</span>
+                                        {% if category.is_staff %}
+                                            <span class="name-value" style="font-family: FA-solid; padding-bottom: 3px">&#xf067;&nbsp</span>
+                                        {% else %}
+                                            <span class="name-value">від&nbsp</span>
+                                        {% endif %}
+                                        <span class="price-value">₴{{ min_price.price }}</span></a>
+                                    <p class="description">{{ type.type_description }}</p>
+                               {% endwith %}
+                               </div>
+                          {% endif %}
+                        {% endfor %}
+                    </div>
+                 {% endfor %}
+             </div>
+    </section>
+    <section>
+        <div class="container-cooking" id="imagesecond">
+             <div class="cooking">
+                <h2>Кращі рецепти</h2>
+                <h3>з найкращих інґрідієнтів</h3>
+                <p>Тисячі задоволених клієнтів. incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidata.</p>
+            </div>
+        </div>
+    </section>
+    <section>
+         <div class="container">
+              <div style="margin-bottom: 0.4rem" class="titles">
+                 <h2>Події & блог</h2>
+                  <div class="lines clearfix">
+                        <img src={% static 'img/line.png' %} id="line-left">
+                        <img src={% static 'img/line.png' %} id="line-right">
+                   </div>
+                 <h3>недавні роботи</h3>
+             </div>
+             {% for item in blogs %}
+
+                  <div class="blog1">
+                         <a class="blog-photo1" href="{% url 'details_product' slug=item.photo.product.slug_product active_fancy_tab_id=1%}">
+                                <img src="{{ item.photo.photo.url }}" alt="{{ item.photo.product.name }}">
+                         </a>
+                         <div class="blog-comment1">
+                                 <div class="text-block">
+                                     <div class="date"><span class="day">{{ item.photo.dates_upload|date:"d" }}</span><span class="month">/{{ item.photo.dates_upload|date:"m" }}</span></div>
+                                     <h4 id="commit-db-1">"{{ item.photo.product.name }}"</h4>
+                                     <a class="link-text-commit" href="{% url 'details_product' slug=item.photo.product.slug_product active_fancy_tab_id=3%}">
+                                        <p> "{{ item.comment.r_commit }}"</p>
+                                     </a>
+                                 </div>
+                                <div>
+                                     <span id="signature-id" class="signature">-
+                                            {% if item.comment.client_commit.real_name %}
+                                               {{ item.comment.client_commit.real_name }}
+                                            {% else %}
+                                                {{ item.comment.client_commit.username }}
+                                            {% endif %}
+                                            ({{ item.comment.dates_edit }})
+                                     </span>
+                                 </div>
+                                 <div class="commit-block">
+                                     <a class="link" href="{% url 'details_product' slug=item.photo.product.slug_product active_fancy_tab_id=3%}">
+                                        <p id="postcommit"><span class="awesome">&#xf086;</span> <span class="countcomment">{{ item.count }}</span>&nbsp{{ item.edit_key }}<span class="end"></span></p>
+                                     </a>
+                                 </div>
+                         </div>
+                 </div>
+
+             {% endfor %}
+             <a class="button" href="#">Дивитися всі відгуки</a>
+        </div>
+    </section>
+    <script type="text/javascript">
+    ellipsizeTextBox('signature-id');
+
+    function ellipsizeTextBox(id) {
+    var el = document.getElementById(id);
+    var wordArray = el.innerHTML.split(' ');
+    while(el.scrollHeight > el.offsetHeight) {
+        wordArray.pop();
+        el.innerHTML = wordArray.join(' ') + '...';
+     }
+    }
+
+    $(document).ready(function () {
+                    let submitter;
+                    $('button:submit').click(function () {
+                        submitter = $(this).val();
+                     });
+                    $('input[type="tel"]').inputmask('0999999999', {
+                        clearMaskOnLostFocus: true,
+                    });
+                    let frm = $('#sendor');
+                    frm.on('submit', function (e) {
+                        let invite='';
+                        let fname = $('#fname').val();
+                        let email = $('#email').val();
+                        let tel = $('#telNo').val();
+                        let order_description = $('#order_description').val();
+                        switch (submitter){
+                            case 'send': invite = 'Перевірте свою поштово скриньку за декілька хвилин: ' + email; break;
+                            case 'call': invite = 'Очікуйте дзвінка зв декілька хвилин на номер: ' + tel; break;
+                        }
+                        let data = {};
+                        data.submitter = submitter;
+                        data.username = fname;
+                        data.email = email;
+                        data.phone = tel;
+                        data.order_description = order_description;
+                        let csrf_token = $('#sendor [name="csrfmiddlewaretoken"]').val();
+                        data["csrfmiddlewaretoken"] = csrf_token;
+                        let url = frm.attr("action");
+                        let check = true;
+                        let field = [];
+                        $.ajax({
+                            url: url,
+                            type: 'POST',
+                            data: data,
+                            cache: true,
+                            beforeSend:function() {
+                               frm.find('input[data-validate]').each(function () {
+                                   field.push('input[data-validate]');
+                                   let value = $(this).val(),
+                                       line = $(this).closest('.form__line');
+                                   for(let i=0;i<field.length;i++) {
+                                     if( !value ) {
+                                       check = false;
+                                       line.addClass('form__line-required');
+                                       setTimeout(function() {
+                                         line.removeClass('form__line-required')
+                                       }.bind(this),2000);
+                                     }
+                                   }
+                                 });
+                                if (!check) return false;
+                                if (check) {$('.loading_main').removeClass('none_display_main');}
+                             },
+                            complete: function(){
+                                $('.loading_main').addClass('none_display_main');
+                             },
+                            success: function(data) {
+                                if (data.error)
+                             {
+                                   $.confirm({
+                                   title: 'Виникла проблема!',
+                                   content: 'Не получилось передати дані на сервер!',
+                                   type: 'orange',
+                                   theme: 'material',
+                                   draggable: true,
+                                   useBootstrap: false,
+                                   buttons: {
+                                       ok: {
+                                           text: "OK",
+                                           btnClass: 'btn-primary',
+                                           keys: ['enter'],
+                                           action: function(){
+
+                                           }
+                                       }
+                                   }
+                               });
+                             }
+                             else {
+                                    $("input[type='text']").val('');
+                                    $("input[type='email']").val('');
+                                    $("input[type='tel']").val('');
+                                    $("#order_description").val('');
+                                    $.confirm({
+                                        title: 'Ваш заказ прийнято!',
+                                        content: fname + ', ми дякуємо Вам, що обрали нас! ' + invite,
+                                        type: 'orange',
+                                        theme: 'material',
+                                        draggable: true,
+                                        useBootstrap: false,
+                                        buttons: {
+                                            ok: {
+                                                text: "OKAY",
+                                                btnClass: 'btn-primary',
+                                                keys: ['enter'],
+                                                action: function () {
+
+                                                }
+                                            }
+                                        }
+                                    });
+                                }
+                            },
+                            error: function () {
+                                console.log("error in save db quick order")
+                            },
+                        });
+                    e.preventDefault();
+                    })
+                });
+  </script>
+    <section>
+        <div class="container-order">
+            <form class="js-form-validate" id="sendor" action="" method="post">{% csrf_token %}
+             <h2>Швидке замовлення</h2>
+             <h3>Просто введіть необхідні дані. Працює калбек.</h3>
+             <div class="inputs">
+                     <div class="user">
+                        <div class="form__line">
+                            <input type="text" id="fname" placeholder="Як до Вас звертатись? *" data-validate>
+                            <span class="form__hint">Обов'язкове для заповнення</span>
+                        </div>
+                        <div class="form__line">
+                            <input type="email" title="Формат: myname@dot.com " id="email" placeholder="E-mail *" data-validate>
+                            <span class="form__hint">Обов'язкове для заповнення</span>
+                        </div>
+                        <div class="form__line">
+                            <input type="tel" pattern="\d{10}" title="Формат\зразок: XXXXXXXXXX\0982548248" id="telNo" placeholder="Телефоний номер *" data-validate>
+                            <span class="form__hint">Обов'язкове для заповнення</span>
+                        </div>
+                     </div>
+                     <div class="des">
+                        <p><textarea rows="5" cols="45" id="order_description" placeholder="Просто введіть короткий опис торта чи іншого виробу, який Ви хочете замовити. Не забудьте вказати дату, коли Ви хочете забрати готові вироби. "></textarea></p>
+                     </div>
+             </div>
+            <div class="controls">
+                <button type="submit" id="quick_send" value="send">Відправити заказ</button>
+                <button type="submit" id="quick_call" value="call">Замовити калбек</button>
+            </div>
+
+            </form>
+        </div>
+    </section>
+    <footer>
+         <div id='contacts' class="container">
+             <div class="titles">
+                 <h2>Як нас знайти?</h2>
+                  <div class="lines clearfix">
+                        <img src={% static 'img/line.png' %} id="line-left">
+                        <img src={% static 'img/line.png' %} id="line-right">
+                   </div>
+                 <h3>зателефонуйте прямо зараз</h3>
+             </div>
+             <p>Телефон: <a class="link" title='Подзвонити' href='tel:+380982549248'>+38(098)254-92-48</a></p>
+             <p>Адресса: <span class="address">бульвар Куліша 4</span></p>
+             <p>Години роботи: <span class="address">з 9.00 до 21.00</span></p>
+             <p>
+                E-mail:
+                 <a  class="link1" href="mailto:ivanmila24@gmail.com?Subject=Привіт%20Замовлення" target="_top">ivanmila24@gmail.com</a>
+             </p>
+             <div class="social">
+                 <p><a class="link" title="WhatsApp" href="whatsapp://send?phone=+380982548248" >&#xf40c;</a> <a class="link" title="Viber" href="https://viber.me/380982548248" >&#xf409;</a> <a class="link" title="Telegram" href="#" >&#xf2c6;</a> <a class="link" title="Instagram" href="https://www.instagram.com/mila.tort/" >&#xf16d;</a> <a class="link" title="Messanger" href="https://m.me/mila.ivanyna" >&#xf39f;</a> <a class="link" title="Facebook" href="https://facebook.com/groups/milatort" >&#xf082;</a></p>
+             </div>
+             <div class="copyright">
+                 <p>MilaTort &#169; 2019. Privacy Policy</p>
+                 <p>
+                    Designed by:
+                    <a  class="link" href="mailto:lionsoroma@gmail.com?Subject=Hi" target="_by">Lionso</a>
+                 </p>
+            </div>
+        </div>
+        <div id="map">
+            <script type="text/javascript">
+                function initMap() {
+                    var mapOptions = {
+                        zoom: 18,
+                        center: new google.maps.LatLng(49.5669039,25.6417547),
+                        styles: [{"featureType":"all","elementType":"labels.text.fill","stylers":[{"saturation":36},{"color":"#000000"},{"lightness":40}]},{"featureType":"all","elementType":"labels.text.stroke","stylers":[{"visibility":"on"},{"color":"#000000"},{"lightness":16}]},{"featureType":"all","elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"administrative","elementType":"geometry.fill","stylers":[{"color":"#000000"},{"lightness":20}]},{"featureType":"administrative","elementType":"geometry.stroke","stylers":[{"color":"#000000"},{"lightness":17},{"weight":1.2}]},{"featureType":"landscape","elementType":"geometry","stylers":[{"color":"#000000"},{"lightness":20}]},{"featureType":"poi","elementType":"geometry","stylers":[{"color":"#000000"},{"lightness":21}]},{"featureType":"road.highway","elementType":"geometry.fill","stylers":[{"color":"#000000"},{"lightness":17}]},{"featureType":"road.highway","elementType":"geometry.stroke","stylers":[{"color":"#000000"},{"lightness":29},{"weight":0.2}]},{"featureType":"road.arterial","elementType":"geometry","stylers":[{"color":"#000000"},{"lightness":18}]},{"featureType":"road.local","elementType":"geometry","stylers":[{"color":"#000000"},{"lightness":16}]},{"featureType":"transit","elementType":"geometry","stylers":[{"color":"#000000"},{"lightness":19}]},{"featureType":"water","elementType":"geometry","stylers":[{"color":"#000000"},{"lightness":17}]}]
+
+                    };
+                    var mapElement = document.getElementById('map');
+                    var map = new google.maps.Map(mapElement, mapOptions);
+
+                    var marker = new google.maps.Marker({
+                        position: new google.maps.LatLng(49.5669039,25.6417547),
+                        map: map,
+                        title:'MilaTort',
+                    });
+                }
+            </script>
+            <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCx-bbHx_cHkZmaFI8kESZ9n_-nrwTxWXA&callback=initMap"></script>
+        </div>
+    </footer>
+<script src="{%  static 'js/slow.js' %}"></script>
+<!--it was js/jquery-3.3.1.min.js' -->
+<script src="{%  static 'js/jquery-confirm.min.js' %}"></script>
+<script src="{%  static 'js/inputmask.js' %}"></script>
+<script src="{%  static 'js/jquery.inputmask.js' %}"></script>
+</body>
+</html>

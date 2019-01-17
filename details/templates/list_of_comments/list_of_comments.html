@@ -1,0 +1,62 @@
+{% load static %}
+{% load previous %}
+  <div class="col-md-12">
+        {% if comments %}
+            <h2>Відгуки:</h2>
+        {% else %}
+            <h2>Відгуки: <span style="color: darkgray ">немає</span></h2>
+        {% endif %}
+        {% if comments %}
+            <div class="comments-block" id="auto-scroll">
+                {% for comment in comments %}
+                    <div class="speech-bubble-ds">
+                        {% if comment.rating %}
+                           <div class="stars-background">
+                                 {% for x_star in "x"|rjust:"10" %}
+                                     {% if forloop.counter0|divisibleby:2 %}
+                                         {% if forloop.counter0 < comment.rating %}
+                                             {% if forloop.counter0|add:1 == comment.rating %}
+                                                 <span class="star-static-half-small">&#xf005;</span>
+                                             {% else %}
+                                                 <span class="star-static-fill-small">&#xf005;</span>
+                                             {% endif %}
+                                         {% else %}
+                                             <span class="star-static-border-small">&#xf005;</span>
+                                         {% endif %}
+                                     {% endif %}
+                                 {% endfor %}
+                           </div>
+                        {% endif %}
+                        {% if comment.client_commit.user.username %}
+                            {% if comment.client_commit.real_name %}
+                                <p><strong>{{ comment.client_commit.real_name }}:</strong></p>
+                            {% else %}
+                                <p><strong>{{ comment.client_commit.user.username }}:</strong></p>
+                            {% endif %}
+                        {% endif %}
+                        {% if comment.r_commit %}
+                            <p>"{{ comment.r_commit }}"</p>
+                        {% else %}
+                            <p style="color: darkgray; font-style: italic;">(без коментарів)</p>
+                        {% endif %}
+                        <p id="date_commit">{{ comment.dates_commit }}</p>
+                        <div class="speech-bubble-ds-arrow"></div>
+                    </div>
+                {% endfor %}
+                {% if not user.is_authenticated and not basket_present %}
+                     <div class="speech-bubble-ds system_commit">
+                         <p><strong>system:</strong></p>
+                         <p style="font-size: 0.8rem; color: darkgray; font-style: italic;">"Щоб отримати можливість залишити відгук Ви повинні залогінитись чи зареєструватись. Також повинно бути зевершене бодай одне замовлення"</p>
+                         <p id="date_commit">{% now "DATETIME_FORMAT" %}</p>
+                         <div class="speech-bubble-ds-arrow"></div>
+                     </div>
+                {% endif %}
+                <div><p>&nbsp&nbsp</p></div>
+            </div>
+             <script type="text/javascript">
+                   $("#auto-scroll").animate({ scrollTop: $("#auto-scroll").height() * parseInt("{{ comments.count|safe }}") }, "slow");
+              </script>
+        {% else %}
+            <p style="color: darkgray">Щоб отримати можливість залишити відгук Ви повинні залогінитись чи зареєструватись. Також повинно бути зевершене бодай одне замовлення</p>
+        {% endif %}
+  </div>

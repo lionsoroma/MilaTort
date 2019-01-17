@@ -1,0 +1,821 @@
+{% extends 'products/products.html' %}
+{% load staticfiles %}
+{% load static %}
+{% load previous %}
+{% load get_h %}
+{% load humanize %}
+{% load l10n %}
+{% load get_full_discount %}
+
+{% block title %}
+        MilaTort - оформлення заказу
+{% endblock %}
+
+{% block content %}
+    <link href="{% static 'css/calendar.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'css/input_warning.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'css/loader_animation_two.css' %}" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/basket_finish.css' %}"
+          xmlns="http://www.w3.org/1999/html">
+      <script src="{% static 'js/calendar.js' %}"></script>
+      <script type="text/javascript">
+      function update_finish_basket(order_id, to_remove = false, stuff_id = undefined) {
+          let head_orig_total = parseFloat(($('.finish_total_amount').text()).replace(/,/g, '.'));
+          let final_amount_table = $('#' + order_id + '.final_amount_table');
+          let final_amount_table_dig = parseFloat((final_amount_table.text().replace(/,/g, '.')));
+            if (to_remove === true) {
+              head_orig_total = head_orig_total - final_amount_table_dig;
+              let count_orders_in_basket = parseInt($('.finish_total_count').text());
+              count_orders_in_basket = --count_orders_in_basket;
+              if (count_orders_in_basket === 0){
+                  $('.delivery-checkbox').prop('disabled', true);
+                  $('.delivery-checkbox').prop('checked', false);
+                  $('.notes-input').prop('disabled', true);
+                  $('.input-underline-notes').attr('style', 'background: darkgray;');
+                  $('.remove-disable').prop('disabled', true);
+                  $('.address-block-div').addClass('tess');
+                  $('#that_finish').addClass('non-active-order');
+                  $('.delivery_notes-link').attr('style', 'visibility: hidden');
+              }
+              $('.finish_total_count').text(count_orders_in_basket);
+            }
+          let stuff_price =  parseFloat(($('#' + order_id + '.stuff_price').text()).replace(/,/g, '.'));
+          if (!stuff_price) {stuff_price = 0};
+          let weight_or_pcs = parseFloat(($('#' + order_id + '.pro_weight_or_pcs').text()).replace(/,/g, '.'));
+          let price = parseFloat(($('#' + order_id + '.span_price').text()).replace(/,/g, '.'));
+          let final_price_discount = (weight_or_pcs * (price + stuff_price)).toFixed(2);
+          let tmp = final_price_discount - final_amount_table_dig;
+          head_orig_total = (head_orig_total + tmp).toFixed(2);
+          final_amount_table.text(((final_price_discount).toString()).replace('.', ','));
+          $('.finish_total_amount').text(((head_orig_total).toString()).replace('.', ','));
+          let data = {};
+          data.super_order_id = order_id;
+          data.super_weight_or_pcs = weight_or_pcs;
+          data.to_remove = to_remove;
+          data.stuff_id = stuff_id;
+          let url = "{% url 'basket_finish' %}";
+          $.ajax({
+              url: url,
+              type: 'POST',
+              data: data,
+              cache: true,
+              headers: {'X-CSRFToken': '{{ csrf_token }}'},
+              success: function (data) {
+
+              },
+              error: function () {
+                  console.log("error in save db finish basket")
+              },
+          })
+      }
+       function msToTime(duration) {
+          var milliseconds = parseInt((duration % 1000) / 100),
+            seconds = parseInt((duration / 1000) % 60),
+            minutes = parseInt((duration / (1000 * 60)) % 60),
+            hours = parseInt((duration / (1000 * 60 * 60)) % 24);
+            hours = (hours < 10) ? + hours : hours;
+            minutes = (minutes < 10) ? "0" + minutes : minutes;
+            seconds = (seconds < 10) ? "0" + seconds : seconds;
+          return hours;
+        }
+       function item_selected_go(order_id) {
+          let base_r_date = $('.full_date');
+          let start_r_date_ms = (base_r_date.data('start_cal_date')) * 1000;
+          let start_object_ct = $('#'+order_id+'.delete_row');
+          let start_ct_value = (start_object_ct.data('cooking_time_one_start')) * 1000;
+          if (!start_ct_value){start_ct_value = 0}
+          let add_item = $('#'+order_id+'.selectbox').select();
+          let add_value = parseFloat(add_item.find(':selected').val().replace(/,/g, '.'));
+          let select_text = add_item.find(':selected').text();
+          let select_link = add_item.find(':selected').data('stuff-link');
+          let time_cooking_ms = (add_item.find(':selected').data('time_cooking')) * 1000;
+          start_object_ct.data('cooking_time_one_start', parseFloat(time_cooking_ms / 1000));
+          $('#'+order_id+'.stuff_link').removeClass('none_display');
+          select_text = select_text.split('+')[0];
+          if (!time_cooking_ms) {time_cooking_ms = 0} else {select_text = select_text + ' + ' + msToTime(time_cooking_ms) + ' год';}
+          let super_stuff_cooking = time_cooking_ms - start_ct_value;
+          let datepicker = $('#deliveryDate').datepicker().data('datepicker');
+          if (super_stuff_cooking !== 0) {
+              let date_new_r_ms = start_r_date_ms + super_stuff_cooking;
+              let new_date_r_ms = new Date(date_new_r_ms);
+               datepicker.destroy();
+                   $('#deliveryDate').datepicker({minDate: new Date(new_date_r_ms),
+                       onSelect: function(dateText) {
+                        let temp = dateText.replace(/\s/, 'T');
+                        select_date = new Date(temp).valueOf();
+                    }
+                   });
+                   datepicker.show();
+              let put_new_r_date = (parseFloat(date_new_r_ms / 1000));
+              base_r_date.data('start_cal_date', put_new_r_date);
+          }
+          let stuff_id = parseInt(add_item.find(':selected').attr('id'));
+          $('#'+order_id+'.stuff_price').text(((add_value.toFixed(2)).toString()).replace('.',','));
+          $('#'+order_id+'.span_currency').text('+');
+          $('#'+order_id+'.link-detail-stuff').text(select_text);
+          $('#'+order_id+'.link-detail-stuff').attr("href", select_link);
+          update_finish_basket(order_id, to_remove=false, stuff_id);
+       }
+      </script>
+      <script type="text/javascript">
+         function decrement(e, order_id, unit) {
+             e.preventDefault();
+         let editable_weight_or_pcs = $('#'+order_id+'.pro_weight_or_pcs');
+         let change_value = parseFloat((editable_weight_or_pcs.text()).replace(/,/g,'.'));
+         if (unit === 'kg') {
+              if (change_value > 2){
+             change_value = change_value - 0.1;
+             change_value = Math.round(change_value * 100) / 100;}
+         }
+         else {
+              if (change_value > 2){
+             change_value = change_value - 1;
+             change_value = Math.round(change_value * 100) / 100;}
+         }
+         editable_weight_or_pcs.text(((change_value).toString()).replace('.',','));
+         update_finish_basket(order_id);
+         };
+         function increment(e, order_id, unit) {
+              e.preventDefault();
+         let editable_weight_or_pcs = $('#'+order_id+'.pro_weight_or_pcs');
+         let change_value = parseFloat((editable_weight_or_pcs.text()).replace(/,/g,'.'));
+         if (unit === 'kg'){
+             change_value = change_value + 0.1;
+             change_value = Math.round(change_value * 100) / 100;
+         }
+         else {
+             change_value = change_value + 1;
+             change_value = Math.round(change_value * 100) / 100;
+         }
+         editable_weight_or_pcs.text(((change_value).toString()).replace('.',','));
+         update_finish_basket(order_id);
+         };
+
+         function delete_click_go(order_id, to_remove) {
+             update_finish_basket(order_id, to_remove);
+             if (to_remove){
+              let delete_row = $('#' + order_id + '.delete_row');
+              let time_delta_ms = (delete_row.data('cooking_time')) * 1000;
+              let base_date = $('.full_date');
+              let start_sm_value = (delete_row.data('cooking_time_one_start')) * 1000;
+              let start_date_ms = (base_date.data('start_cal_date')) * 1000;
+              if (!start_sm_value){start_sm_value = 0}
+              if (time_delta_ms){
+                  let date_new_ms = start_date_ms - (time_delta_ms + start_sm_value);
+                  let new_date_ms = new Date(date_new_ms);
+                  let datepicker = $('#deliveryDate').datepicker().data('datepicker');
+                   datepicker.destroy();
+                   $('#deliveryDate').datepicker({minDate: new Date(new_date_ms),
+                       onSelect: function(dateText) {
+                        let temp = dateText.replace(/\s/, 'T');
+                        select_date = new Date(temp).valueOf();
+                    }}
+                   );
+                   datepicker.show();
+                   let put_new_date = (parseFloat(date_new_ms / 1000));
+                  base_date.data('start_cal_date', put_new_date );}
+              delete_row.closest('tr').remove();
+          }
+         }
+      </script>
+      <script type="text/javascript">
+             $('.count_products').addClass('none_display');
+             $('.numberCircle').addClass('none_display');
+             $('.always_content').addClass('none_display');
+             $('.finish_content').removeClass('none_display');
+             $('.basket-symbol').addClass('none_display');
+      </script>
+    <!---
+     <script type="text/javascript" >
+     window.onpageshow = function (event) {
+          if (event.persisted) {
+            window.location.reload();
+          }
+
+        };
+     </script>
+    --->
+  <!--
+  Don't forget unite loader_animation.css and loader_animation_two.css in one file!!
+  -->
+  <div class="loading none_display">Loading&#8230;</div>
+  <div class ="check-out-block">
+  <div class ="head-table clearfix">
+      <p>Просимо Вас зауважити, що вагу виробу дуже важко розрахувати абсолютно точно: допустима похибка +/- 500г. Оплата здійснюється по факту.</p>
+  </div>
+    <table class = "full_date" data-start_cal_date = '{{ start_calendar_date|date:"U" }}' data-stuff_hours_total_s = '{{ stuff_hours_total_s }}'>
+        <thead>
+            <tr>
+            </tr>
+        </thead>
+        <tbody>
+        <tr>
+           {% for order in orders %}
+               <tr class="delete_row" id="{{ order.id }}"
+                   {% if order.product.cooking_time %}
+                         {%  with time_of_deltas|prev:forloop.counter0 as time_delta_s %}
+                             data-cooking_time="{{ time_delta_s }}"
+                         {% endwith %}
+                   {% endif %}
+                    {% if order.is_stuffing_id %}
+                        {%  with stuff_cooking_time_array|prev:forloop.counter0 as stuff_cooking_time_one %}
+                            {% if stuff_cooking_time_one %}
+                                     data-cooking_time_one_start="{{ stuff_cooking_time_one }}"
+                             {% endif %}
+                         {% endwith %}
+                   {% endif %}
+                    >
+                    <td style="text-align: center">
+                        <a href = "#" onclick="delete_click_go('{{ order.id }}',to_remove=true)" class="close-cross">&#xf00d;</a>
+                    </td>
+                    <td class="product_in_cell">
+                    <div class="left_plus_right">
+                      <div class="left_part">
+                        <div class="top_part">
+                            <div class="small-table-photo">
+                               <a class="update_order_id" href="{% url 'details_product' slug=order.product.slug_product order_id=order.id %} ">
+                                   {%  with small_photos_in_order|prev:forloop.counter0 as small_photo_in_order %}
+                                       <img src="{{ small_photo_in_order.photo.url }}">
+                                   {% endwith %}
+                               </a>
+                           </div>
+                            <div class="description_table">
+                            <p><a class="update_order_id" href="{% url 'details_product' slug=order.product.slug_product order_id=order.id %} ">
+                                {% if order.product.get_unit_display == 'кг' %}
+                                    {{ order.product.category_plus_type_product }} {{ order.product.name }}
+                                {% else %}
+                                     {{ order.product.category_plus_type_product.typeof }} {{ order.product.name }}
+                                {% endif %}
+                             </a></p>
+                               <p class="hour_displayed">
+                                    {% if order.product.cooking_time|get_h  %}
+                                        <span class="currency_hour">орієнтовний час виготовлення: {{ order.product.cooking_time|get_h }} год</span>
+                                    {% endif %}
+                                </p>
+                             {% if order.product.get_unit_display == 'кг' and not order.product.category_plus_type_product.category.is_staff %}
+                                <select id = "{{ order.id }}" class="selectbox" onchange="item_selected_go('{{ order.id }}')">
+                                <option selected="selected" disabled="disabled">Виберіть начинку/серединку</option>
+                                {% for stuff in stuffing %}
+                                    <option
+                                            {% if order.is_stuffing_id %}
+                                                {% if stuff.id == order.is_stuffing_id %}
+                                                    selected="selected"
+                                                {% endif %}
+                                            {% endif %}
+                                            {% if stuff.cooking_time %}
+                                                data-time_cooking = "
+                                                {%  with stuff_of_deltas|prev:forloop.counter0 as stuff_delta_s %}
+                                                    {{ stuff_delta_s }}
+                                                {% endwith %}
+                                                "
+                                            {% endif %}
+                                            data-stuff-link = "{% url 'details_product' slug=stuff.slug_product %}"
+                                            id="{{ stuff.id }}" value="
+                                            {%  with full_stuff_prices_with_discount|prev:forloop.counter0 as full_stuff_price_with_discount %}
+                                            {{ full_stuff_price_with_discount }}
+                                            {% endwith %}
+                                                ">{{ stuff.category_plus_type_product.typeof }}: {{ stuff.name }} +
+                                            {%  with full_stuff_prices_with_discount|prev:forloop.counter0 as full_stuff_price_with_discount %}
+                                                {{ full_stuff_price_with_discount }}
+                                            {% endwith %}
+                                            ₴/кг
+                                    </option>
+                                {% endfor %}
+                                </select>
+                                  <div id = "{{ order.id }}" class="stuff_link
+                                   {% if not order.is_stuffing_id %}
+                                       {{ "none_display" }}
+                                   {% endif %} ">
+                                      <img class="stuff_link_arrow" src={% static 'img/down_right.png' %} alt="down_right" >
+                                      <a id = "{{ order.id }}" class = "link-detail-stuff"
+                                              {% for stuff in stuffing %}
+                                                  {% if stuff.id == order.is_stuffing_id %}
+                                                    href="{% url 'details_product' slug=stuff.slug_product %}"
+                                                  {% endif %}
+                                              {% endfor %}>
+                                              {% for stuff in stuffing %}
+                                                  {% if stuff.id == order.is_stuffing_id %}
+                                                      {{ stuff.category_plus_type_product.typeof }}: {{ stuff.name }}
+                                                      {% if stuff.cooking_time %}
+                                                          + {{ stuff.cooking_time|get_h }} год
+                                                      {% endif %}
+                                                  {% endif %}
+                                              {% endfor %}</a>
+                                    </div>
+                             {% endif %}
+                            </div>
+                        </div>
+                        <div class="bottom_part">
+                            <div class="price_and_currency">
+                                    <span class="span_price" id="{{ order.id }}">
+                                    {%  with order_prices_with_discount|prev:forloop.counter0 as order_price_with_discount %}
+                                        {{ order_price_with_discount }}
+                                    {% endwith %}
+                                    </span>
+                                    <span class="span_currency" id="{{ order.id }}">
+                                         {% if order.is_stuffing_id %}
+                                         +{% endif %}</span>
+                                     <span class="stuff_price" id="{{ order.id }}">
+                                      {% if order.is_stuffing_id %}
+                                        {%  with stuff_prices_with_discount|prev:forloop.counter0 as stuff_price_with_discount %}
+                                           {{ stuff_price_with_discount }}
+                                        {% endwith %}
+                                       {% endif %}
+                                     </span>
+                                     <span class="span_currency">₴</span>
+                            </div>
+                            <div class="plus_minus">
+                                <div style="display: inline-block"><a href="#" class="plus_minus_decor" onclick="decrement(event, '{{ order.id }}','{{ order.product.unit }}')" id="minus_item"><span class="minus-symbol">&#xf068;</span></a></div>
+                                <div style="display: inline-block">
+                                <div class="width_weight_or_pcs">
+                                     {% if order.product.get_unit_display == 'кг' %}
+                                         <span class="pro_weight_or_pcs" id="{{ order.id }}" >{{ order.weight_or_pcs }}</span>
+                                         <span class="span_units">{{ order.product.get_unit_display }}</span>
+                                     {% else %}
+                                         <span class="pro_weight_or_pcs" id="{{ order.id }}" >{{ order.weight_or_pcs|floatformat:"0" }}</span>
+                                         <span class="span_units">{{ order.product.get_unit_display }}</span>
+                                     {% endif %}
+                                </div>
+                                </div>
+                                <div style="display: inline-block"><a href="#" class="plus_minus_decor" onclick="increment(event, '{{ order.id }}','{{ order.product.unit }}')" id="plus_item"><span class="plus-symbol">&#xf067;</span></a></div>
+                            </div>
+                            <div class="row_sum_ok">
+                                <span class="final_price_table">
+                                {%  with item_row_sums|prev:forloop.counter0 as item_row_sum %}
+                                    <span class="final_amount_table" id="{{ order.id }}">{{ item_row_sum|floatformat:"2" }}</span>
+                                {% endwith %}
+                                </span>
+                                <span class="currency_table">грн</span>
+                            </div>
+                         </div>
+                      </div>
+                      <div class="right_part">
+                          <div class="description_content">
+                               {% if order.product.product_description %}
+                                   <p>&nbsp&nbsp&nbsp{{ order.product.product_description }}</p>
+                               {% else %}
+                                   <p>(опис відсутній)</p>
+                               {% endif %}
+                          </div>
+                      </div>
+                    </div>
+                    </td>
+               </tr>
+ {% endfor %}
+        </tr>
+        </tbody>
+    </table>
+<script type="text/javascript">
+  let data_c= {};
+  let citiesByAbbreviation = [{}];
+  data_c.city_or_street = 'city';
+  let url_c = "{% url 'cities_streets' %}";
+  $.ajax({
+      url: url_c,
+      type: 'POST',
+      data: data_c,
+      dataType: "json",
+      cache: true,
+      headers: {'X-CSRFToken': '{{ csrf_token }}'},
+      success: function (data_c) {
+            $.each(data_c.cities, function (k_c, v_c) {
+                item_c = {};
+                item_c['city'] = v_c.name_of_city;
+               citiesByAbbreviation.unshift(item_c);
+            });
+            citiesByAbbreviation.splice(-1);
+          },
+      error: function () {
+          console.log("error read 'cities'")
+      },});
+let filterCitiesOnChange = function filterCitiesOnChange(event) {
+  let value_c = event.target.value.toLowerCase();
+  let result = citiesByAbbreviation.filter(function (cityObject) {
+    let city = cityObject.city || '';
+    let cityString = city;
+    return cityString.toLowerCase().includes(value_c);});
+  generateCitiesList(result);};
+let addEventListenerToCities = function addEventListenerToCities() {
+  let citiesInput = document.querySelector('.cities-input');
+  let cityListItems = document.querySelectorAll('.city');
+  let cityListItemIndex = 0;
+  let cityListItemILength = cityListItems.length;
+  for (cityListItemIndex; cityListItemIndex < cityListItemILength; cityListItemIndex++) {
+    let cityListItem = cityListItems[cityListItemIndex];
+    cityListItem.addEventListener('mousedown', function (event) {
+      event.preventDefault();
+      event.stopPropagation();
+      let value_c = event.currentTarget.innerText;
+      citiesInput.value = value_c;
+      filterCitiesOnChange({ target: { value: value_c } });
+      citiesInput.focus();});}};
+let createCityListItem = function createCityListItem(_ref) {
+  let _ref$city = _ref.city,
+      city = _ref$city === undefined ? '' : _ref$city;
+  return "<li class=\"city\" data-value_c=\"" + city + "\">" + "<span class=\"city--name\">" + city + "</span></li>";};
+let generateCitiesList = function generateCitiesList(citiesArray) {
+  let citiesList = document.querySelector('.cities-list');
+  citiesList.innerHTML = '';
+  let citiesLength = citiesArray.length;
+  for (let cityIndex = 0; cityIndex < citiesLength; cityIndex++) {
+    citiesList.innerHTML += createCityListItem(citiesArray[cityIndex]);}
+  addEventListenerToCities();};
+document.addEventListener("DOMContentLoaded", function () {
+  let citiesInput = document.querySelector('.cities-input');
+  generateCitiesList(citiesByAbbreviation);
+  citiesInput.addEventListener('keyup', filterCitiesOnChange);
+  citiesInput.addEventListener('focus', function () {
+    let citiesList = document.querySelector('.cities-list-container');
+    citiesList.classList.add('visible');});
+  citiesInput.addEventListener('blur', function (event) {
+    let citiesList = document.querySelector('.cities-list-container');
+    citiesList.classList.remove('visible');});});
+</script>
+<script type="text/javascript">
+  let data_s = {};
+  let streetsByAbbreviation = [{}];
+  data_s.city_or_street = 'street';
+  let url_s = "{% url 'cities_streets' %}";
+  $.ajax({
+      url: url_s,
+      type: 'POST',
+      data: data_s,
+      dataType: "json",
+      cache: true,
+      headers: {'X-CSRFToken': '{{ csrf_token }}'},
+      success: function (data_s) {
+            $.each(data_s.streets, function (k_s, v_s) {
+                item_s = {};
+                item_s['street'] = v_s.name_of_street;
+                streetsByAbbreviation.unshift(item_s);
+            });
+            streetsByAbbreviation.splice(-1);
+          },
+      error: function () {
+          console.log("error read 'streets'")
+      },});
+let filterStreetsOnChange = function filterStreetsOnChange(event) {
+  let value_s = event.target.value.toLowerCase();
+  let result = streetsByAbbreviation.filter(function (streetObject) {
+    let street = streetObject.street || '';
+    let streetString = street;
+    return streetString.toLowerCase().includes(value_s);});
+  generateStreetsList(result);};
+let addEventListenerToStreets = function addEventListenerToStreets() {
+  let streetsInput = document.querySelector('.streets-input');
+  let streetListItems = document.querySelectorAll('.street');
+  let streetListItemIndex = 0;
+  let streetListItemILength = streetListItems.length;
+  for (streetListItemIndex; streetListItemIndex < streetListItemILength; streetListItemIndex++) {
+    let streetListItem = streetListItems[streetListItemIndex];
+    streetListItem.addEventListener('mousedown', function (event) {
+      event.preventDefault();
+      event.stopPropagation();
+      let value_s = event.currentTarget.innerText;
+      streetsInput.value = value_s;
+      filterStreetsOnChange({ target: { value: value_s } });
+      streetsInput.focus();});}};
+let createStreetListItem = function createStreetListItem(_ref) {
+  let _ref$street = _ref.street,
+      street = _ref$street === undefined ? '' : _ref$street;
+  return "<li class=\"street\" data-value_s=\"" + street + "\">" + "<span class=\"street--name\">" + street + "</span></li>";};
+let generateStreetsList = function generateStreetsList(streetsArray) {
+  let streetsList = document.querySelector('.streets-list');
+  streetsList.innerHTML = '';
+  let streetsLength = streetsArray.length;
+  for (let streetIndex = 0; streetIndex < streetsLength; streetIndex++) {
+    streetsList.innerHTML += createStreetListItem(streetsArray[streetIndex]);}
+  addEventListenerToStreets();};
+document.addEventListener("DOMContentLoaded", function () {
+  let streetsInput = document.querySelector('.streets-input');
+  generateStreetsList(streetsByAbbreviation);
+  streetsInput.addEventListener('keyup', filterStreetsOnChange);
+  streetsInput.addEventListener('focus', function () {
+    let streetsList = document.querySelector('.streets-list-container');
+    streetsList.classList.add('visible');});
+  streetsInput.addEventListener('blur', function (event) {
+    let streetsList = document.querySelector('.streets-list-container');
+    streetsList.classList.remove('visible');});});
+</script>
+<div class="big_block">
+ {% if not user.is_authenticated or not super_orders  %}
+     <p id="warn_finish">Щоб відправити заказ потрібно авторизуватись чи зареєструватись! Також в кошику повинен бути бодай один товар!</p>
+ {% endif %}
+ <div class="top-block">
+  <div class="finish_step-div">
+      <div class="form__line_basket_date">
+        <div type='date' id="deliveryDate" class="datepicker-here" data-timepicker="true" data-date-format="yyyy-mm-dd" data-position="right top" /></div>
+      <span class="form__hint_date form__line-required_date">Виберіть дату!</span>
+      </div>
+      <div class="address-block-div
+            {% if user.is_authenticated and super_orders %}
+            {% else %}
+                tess
+            {% endif %}">
+            <input class="delivery-checkbox" style="margin-bottom: 0.8rem" type="checkbox"
+                   {% if client.address %}
+                        data-last-address = '{{ client.address }}'
+                   {% endif %}
+            {% if user.is_authenticated and super_orders %}
+            {% else %}
+                disabled="disabled"
+
+            {% endif %}
+            >  Потрібна доставка?<Br>
+            <input class="used-addresses remove-disable-exclude"  type="checkbox"
+                disabled="disabled"
+            ><span class="ssd" style="color: darkgray;">  Вжити останню адресу доставки яку Ви використовували?</span><Br>
+            <div  class="autocomplete-drop-down">
+                <div class="cities-input-container">
+                   <div class="form__line_basket">
+                    <input class="cities-input remove-disable" data-validate
+                            {% if client.address.town %}
+                                        data-last-city = '{{ client.address.town }}'
+                                    {% endif %}
+                            disabled="disabled"
+                           placeholder="*Місто" type="text">
+                    <span class="form__hint_basket">Обов'язкове для заповнення</span>
+                  </div>
+                    <div class="input-underline" style="background: darkgray;"></div>
+                    <span class="input-arrow" style="color: darkgray;">&#9662;</span>
+                </div>
+            </div>
+            <div class="cities-list-container">
+            <ul class="cities-list">
+              <li>&nbsp;</li>
+            </ul>
+            </div>
+            <div style="margin-bottom: 0.8rem" class="autocomplete-drop-down">
+                <div class="streets-input-container">
+                  <div class="form__line_basket">
+                    <input class="streets-input remove-disable" data-validate
+                           {% if client.address.street %}
+                                        data-last-street = '{{ client.address.street }}'
+                                    {% endif %}
+                                 disabled="disabled"
+                           placeholder="*Вулиця" type="text">
+                     <span class="form__hint_basket">Обов'язкове для заповнення</span>
+                  </div>
+                    <div class="input-underline" style="background: darkgray;"></div>
+                    <span class="input-arrow" style="color: darkgray;">&#9662;</span>
+
+                </div>
+            </div>
+            <div class="streets-list-container">
+            <ul class="streets-list">
+              <li>&nbsp;</li>
+            </ul>
+            </div>
+            <div style="margin-bottom: 0.8rem" class = house-apartment-div>
+                 <div class="autocomplete-drop-down-house_apt">
+                     <div class="house_apt-input-container">
+                         <div class="form__line_basket">
+                         <input class="house_apt-input house-input remove-disable" data-validate
+                                    {% if client.address.building %}
+                                        data-last-house = '{{ client.address.building }}'
+                                    {% endif %}
+                                      disabled="disabled"
+                                placeholder="*Буд" type="text">
+                         <span class="form__hint_basket">Обов'язкове для заповнення</span>
+                        </div>
+                         <div class="input-underline-house_apt" style="background: darkgray;"></div>
+
+                    </div>
+                 </div>
+                 <div class="autocomplete-drop-down-house_apt">
+                     <div class="house_apt-input-container">
+                         <input class="house_apt-input apt-input remove-disable"
+                                 {% if client.address.apartment %}
+                                data-last-apt = '{{ client.address.apartment }}'
+                                {% endif %}
+                                      disabled="disabled"
+                                placeholder="Кв" type="text">
+                         <div class="input-underline-house_apt" style="background: darkgray;"></div>
+                    </div>
+                 </div>
+            </div>
+            <div style="margin-bottom: 0.8rem" class="autocomplete-drop-down-notes">
+                     <div class="notes-input-container">
+                         <input class="notes-input"
+                                {% if user.is_authenticated and super_orders %}
+                                {% else %}
+                                    disabled="disabled"
+                                {% endif %}
+                                placeholder="Нотатка" type="text">
+                         <div class="input-underline-notes"
+                              {% if user.is_authenticated and super_orders %}
+                                {% else %}
+                                    style="background: darkgray;"
+                                {% endif %}
+                         ></div>
+                    </div>
+            </div>
+            <div class="delivery_notes-link" style="visibility: hidden">
+                  <p>Вартість доставки:
+                      {% if delivery_price_min %}
+                      <a href="{% url 'details_product' slug=delivery_price_min.slug_product %}">
+                      {% endif %}
+                          {{ delivery_price_min_with_discount }}</a> -
+                      {% if delivery_price_max  %}
+                      <a href="{% url 'details_product' slug=delivery_price_max.slug_product %}">
+                      {% endif %}
+                          {{ delivery_price_max_with_discount }}</a> грн.</p>
+            </div>
+      </div>
+  </div>
+ </div>
+ <div class = botttom-block>
+    <button id="that_finish"  class="finish_step
+        {% if user.is_authenticated and super_orders %}
+        {% else %}
+                {{ 'non-active-order' }}
+        {% endif %}
+        ">
+        <span class="finish_span">&#xf1d8;</span>&nbsp&nbsp&nbspВідправити заказ</button>
+     </div>
+     </div>
+    <script type="text/javascript">
+    $('.delivery-checkbox').click(function () {
+        let is_address = $('.delivery-checkbox').data('last-address');
+        if ($(this).is(':checked')) {
+            $('.remove-disable').prop('disabled', false);
+            $('.input-underline').attr('style', 'background:');
+            $('.input-underline-house_apt').attr('style', 'background:');
+            $('.input-arrow').attr('style', 'color: ');
+            $('.delivery_notes-link').attr('style', 'visibility: visible');
+            if (is_address){
+                $('.remove-disable-exclude').prop('disabled', false);
+                $('.ssd').attr('style', 'color: ');
+            }
+        } else {
+            $('.delivery_notes-link').attr('style', 'visibility: hidden');
+            $('.ssd').attr('style', 'color: darkgray');
+            $('.remove-disable').prop('disabled', true);
+            $('.input-underline').attr('style', 'background: darkgray');
+            $('.input-underline-house_apt').attr('style', 'background: darkgray');
+
+            $('.input-arrow').attr('style', 'color: darkgray')
+        }
+    });
+    $('.used-addresses').click(function () {
+    let city_obj = $('.cities-input');
+    let street_obj = $('.streets-input');
+    let house_obj = $('.house-input');
+    let apt_obj = $('.apt-input');
+    if ($(this).is(':checked')) {
+        let city = city_obj.data('last-city');
+        let street = street_obj.data('last-street');
+        let house = house_obj.data('last-house');
+        let apt = apt_obj.data('last-apt');
+        if (city) {city_obj.val(city)}
+        if (street) {street_obj.val(street)}
+        if (house) {house_obj.val(house)}
+        if (apt) {apt_obj.val(apt)}
+    } else {
+        city_obj.val('');
+        street_obj.val('');
+        house_obj.val('');
+        apt_obj.val('');
+    }
+    });
+    </script>
+      <script type="text/javascript">
+      $('#that_finish').click(function (e) {
+
+          e.preventDefault();
+          e.stopPropagation();
+          let head_total_amount = parseFloat(($('.finish_total_amount').text()).replace(/,/g, '.'));
+          let check_basket = true;
+          let field_basket = [];
+          let data_basket = {};
+          let url_basket  = "{% url "basket_table" %}";
+          let frm_basket = $('.address-block-div');
+          data_basket.head_total_amount = head_total_amount;
+          data_basket.date_last = select_date;
+          data_basket.notes_last = $('.notes-input').val();
+          if ($('.delivery-checkbox').is(':checked')){
+              data_basket.city_last = $('.cities-input').val();
+              data_basket.street_last = $('.streets-input').val();
+              data_basket.house_last = $('.house-input').val();
+              data_basket.apt_last = $('.apt-input').val();
+          }
+          $.ajax({
+          url: url_basket,
+          type: 'POST',
+          data: data_basket,
+          cache: true,
+          headers: {'X-CSRFToken': '{{ csrf_token }}'},
+             beforeSend:function() {
+                if ($('.delivery-checkbox').is(':checked')) {
+                    frm_basket.find('input[data-validate]').each(function () {
+                        field_basket.push('input[data-validate]');
+                        let value_basket = $(this).val(),
+                            line_basket = $(this).closest('.form__line_basket');
+                        for (let i = 0; i < field_basket.length; i++) {
+                            if (!value_basket) {
+                                check_basket = false;
+                                line_basket.addClass('form__line-required_basket');
+                                setTimeout(function () {
+                                    line_basket.removeClass('form__line-required_basket')
+                                }.bind(this), 1500);
+                            }
+                        }
+                    });
+                }
+                 {
+                     if(!select_date) {
+                     let line_basket_date = $('.form__hint_date');
+                     check_basket = false;
+                     line_basket_date.removeClass('form__line-required_date');
+                     $('.datepicker-here').addClass('border_warning');
+                         setTimeout(function() {
+                             line_basket_date.addClass('form__line-required_date');
+                             $('.datepicker-here').removeClass('border_warning');
+                         }.bind(this),1500);}
+                 }
+             if (!check_basket) return false;
+             if (check_basket) {$('.loading').removeClass('none_display');console.log('loader')}
+             },
+             complete: function(){
+                $('.loading').addClass('none_display');
+             },
+             success: function(data_basket){
+                     if (data_basket.error)
+                     {
+                           $.confirm({
+                           title: 'Виникла проблема!',
+                           content: 'Не получилось передати дані на сервер!',
+                           type: 'orange',
+                           theme: 'material',
+                           draggable: true,
+                           useBootstrap: false,
+                           buttons: {
+                               ok: {
+                                   text: "OK",
+                                   btnClass: 'btn-primary',
+                                   keys: ['enter'],
+                                   action: function(){
+
+                                   }
+                               }
+                           }
+                       });
+                     }
+                     else{
+                         let datepicker = $('#deliveryDate').datepicker().data('datepicker');
+                         datepicker.clear();
+                         $('.notes-input').val('');
+                         if ($('.delivery-checkbox').is(':checked')){
+                              $('.cities-input').val('');
+                              $('.streets-input').val('');
+                              $('.house-input').val('');
+                              $('.apt-input').val('');
+                          }
+                          let congratulation_message;
+                          let user_name = '{{ user.username }}';
+
+                          let real__name = '{{ user.client.real_name }}';
+
+                          if (real__name!=='None') {congratulation_message = real__name}
+                          else {congratulation_message = user_name}
+                           $.confirm({
+                               title: 'Ваш заказ прийнято!',
+                               content: congratulation_message+', ми дякуємо Вам за довіру! При необхдності ми зв\'яжемося з Вами, для узгодження деталей.',
+                               type: 'orange',
+                               theme: 'material',
+                               draggable: true,
+                               useBootstrap: false,
+                               buttons: {
+                                   ok: {
+                                       text: "НА ГОЛОВНУ",
+                                       btnClass: 'btn-primary',
+                                       keys: ['enter'],
+                                       action: function(){
+                                            window.location.href = "{% url 'main'  %}"
+                                       }
+                                   }
+                               }
+                           });
+                 }
+                },
+             error: function (data_basket) {
+                console.log("error in save db basket finish");
+               },
+          });
+      });
+let select_date;
+$('#deliveryDate').datepicker({
+      {% if start_calendar_date %}
+        minDate: new Date({{ start_calendar_date.date.year }},{{ start_calendar_date.date.month }}-1,{{ start_calendar_date.date.day }},{{ start_calendar_date.time.hour }},{{start_calendar_date.time.minute }}),
+      {% else %}
+        minDate: new Date(),
+      {% endif %}
+    onSelect: function(dateText) {
+        let temp = dateText.replace(/\s/, 'T');
+        select_date = new Date(temp).valueOf();
+    }
+});
+  </script>
+  </div>
+  </div>
+{% endblock %}

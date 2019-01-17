@@ -1,0 +1,132 @@
+
+@font-face {
+  font-family: 'Raleway-ExtraLight';
+  src: url('../font/Raleway-Cyr/Raleway-ExtraLight.eot');
+  src: url('../font/Raleway-Cyr/Raleway-ExtraLight.eot?#iefix') format('embedded-opentype'),
+       url('../font/Raleway-Cyr/Raleway-ExtraLight.woff') format('woff'),
+       url('../font/Raleway-Cyr/Raleway-ExtraLight.ttf') format('truetype');
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+    font-family: 'Raleway-SemiBold';
+    src: url('../font/Raleway-Cyr/Raleway-SemiBold.eot');
+    src: url('../font/Raleway-Cyr/Raleway-SemiBold.eot?#iefix') format('embedded-opentype'),
+    url('../font/Raleway-Cyr/Raleway-SemiBold.woff') format('woff'),
+    url('../font/Raleway-Cyr/Raleway-SemiBold.ttf') format('truetype');
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+  font-family: 'Raleway-Bold';
+  src: url('../font/Raleway-Cyr/Raleway-Bold.eot');
+  src: url('../font/Raleway-Cyr/Raleway-Bold.eot?#iefix') format('embedded-opentype'),
+       url('../font/Raleway-Cyr/Raleway-Bold.woff') format('woff'),
+       url('../font/Raleway-Cyr/Raleway-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Raleway-ExtraBold';
+  src: url('../font/Raleway-Cyr/Raleway-ExtraBold.eot');
+  src: url('../font/Raleway-Cyr/Raleway-ExtraBold.eot?#iefix') format('embedded-opentype'),
+       url('../font/Raleway-Cyr/Raleway-ExtraBold.woff') format('woff'),
+       url('../font/Raleway-Cyr/Raleway-ExtraBold.ttf') format('truetype');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Raleway-Light';
+  src: url('../font/Raleway-Cyr/Raleway-Light.eot');
+  src: url('../font/Raleway-Cyr/Raleway-Light.eot?#iefix') format('embedded-opentype'),
+       url('../font/Raleway-Cyr/Raleway-Light.woff') format('woff'),
+       url('../font/Raleway-Cyr/Raleway-Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'FA-brands';
+  src: url('../font/Awesome/fa-brands-400.eot');
+  src: url('../font/Awesome/fa-brands-400.eot?#iefix') format('embedded-opentype'),
+       url('../font/Awesome/fa-brands-400.woff') format('woff'),
+       url('../font/Awesome/fa-brands-400.woff2') format('woff2'),
+       url('../font/Awesome/fa-brands-400.ttf') format('truetype');
+       url('../font/Awesome/fa-brands-400.svg#fa-brands') format('svg');
+  unicode-range: U+f40c, U+f409, U+f2c6, U+f16d, U+f39f, U+f082, U+f291;
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'FA-regular';
+  src: url('../font/Awesome/fa-regular-400.eot');
+  src: url('../font/Awesome/fa-regular-400.eot?#iefix') format('embedded-opentype'),
+       url('../font/Awesome/fa-regular-400.woff') format('woff'),
+       url('../font/Awesome/fa-regular-400.woff2') format('woff2'),
+       url('../font/Awesome/fa-regular-400.ttf') format('truetype');
+       url('../font/Awesome/fa-regular-400.svg#fa-regular') format('svg');
+  unicode-range: U+f086, U+f0e0, U+f199, U+f098, U+f095, U+f2a0, U+f291, U+f249, U+f05a, U+f005, U+f089, U+f5c0, U+f067,
+                 U+f068, U+f00d, U+f34c, U+f1d8, U+f68b;
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'FA-solid';
+  src: url('../font/Awesome/fa-solid-900.eot');
+  src: url('../font/Awesome/fa-solid-900.eot?#iefix') format('embedded-opentype'),
+       url('../font/Awesome/fa-solid-900.woff') format('woff'),
+       url('../font/Awesome/fa-solid-900.woff2') format('woff2'),
+       url('../font/Awesome/fa-solid-900.ttf') format('truetype');
+       url('../font/Awesome/fa-solid-900.svg#fa-solid') format('svg');
+  unicode-range: U+f086, U+f0e0, U+f199, U+f098, U+f095, U+f2a0, U+f291, U+f249, U+f05a, U+f005, U+f089, U+f5c0, U+f067,
+                 U+f068, U+f00d, U+f34c, U+f1d8, U+f68b;
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+    font-family: 'Good-Vibes-Pro';
+    src: url('../font/GoodVibesPro/GoodVibesPro.eot');
+    src: url('../font/GoodVibesPro/GoodVibesPro.eot?#iefix') format('embedded-opentype'),
+    url('../font/GoodVibesPro/GoodVibesPro.woff') format('woff'),
+    url('../font/GoodVibesPro/GoodVibesPro.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+  font-family: 'Comfortaa';
+  src: url('../font/Comfortaa/Comfortaa.eot');
+  src: url('../font/Comfortaa/Comfortaa.eot?#iefix') format('embedded-opentype'),
+       url('../font/Comfortaa/Comfortaa.woff') format('woff'),
+       url('../font/Comfortaa/Comfortaa.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Comfortaa-Light';
+  src: url('../font/Comfortaa/Comfortaa-Light.eot');
+  src: url('../font/Comfortaa/Comfortaa-Light.eot?#iefix') format('embedded-opentype'),
+       url('../font/Comfortaa/Comfortaa-Light.woff') format('woff'),
+       url('../font/Comfortaa/Comfortaa-Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Comfortaa-Bold';
+  src: url('../font/Comfortaa/Comfortaa-Bold.eot');
+  src: url('../font/Comfortaa/Comfortaa-Bold.eot?#iefix') format('embedded-opentype'),
+       url('../font/Comfortaa/Comfortaa-Bold.woff') format('woff'),
+       url('../font/Comfortaa/Comfortaa-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}

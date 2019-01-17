@@ -1,0 +1,625 @@
+{% load static %}
+{% load previous %}
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>
+        {% block title %}
+            MilaTort - {{ product_of_type }}
+        {% endblock %}
+    </title>
+     <!--ICON-->
+    <link rel="apple-touch-icon" sizes="180x180" href={% static 'img/favicon_package_v0.16/apple-touch-icon.png' %}>
+    <link rel="icon" type="image/png" sizes="32x32" href={% static 'img/favicon_package_v0.16/favicon-32x32.png' %}>
+    <link rel="icon" type="image/png" sizes="16x16" href={% static 'img/favicon_package_v0.16/favicon-16x16.png' %}>
+    <link rel="manifest" href={% static 'img/favicon_package_v0.16/site.webmanifest' %}>
+    <link rel="mask-icon" href={% static 'img/favicon_package_v0.16/safari-pinned-tab.svg' %} color='#5bbad5'>
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
+
+    <script src="{%  static 'js/jquery-3.3.1.min.js' %}"></script>
+    <script src="{%  static 'js/jquery-confirm.min.js' %}"></script>
+    <script src="{%  static 'js/inputmask.js' %}"></script>
+    <script src="{%  static 'js/jquery.inputmask.js' %}"></script>
+
+
+
+    <link rel="stylesheet" type="text/css" href="{% static 'css/jquery-confirm.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/products.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/input.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/inputmask.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/font.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/products_mobile.css' %}">
+
+
+</head>
+ <script type="text/javascript" >
+     window.onpageshow = function (event) {
+          if (event.persisted) {
+            window.location.reload();
+          }
+        };
+ </script>
+<body id="main_body">
+    <header class="fixed" id="productHeader">
+         <a class="prev_arrow" href="{% url 'main'  %}#{{ category_for_back }}">
+             <img src={% static 'img/prev_mobile.png' %} alt="prev">
+         </a>
+         <div class="title-block">
+             <a class="back_home" href="{% url 'main'  %}#{{ category_for_back }}">
+                 <img id="img_logo" src={% static 'img/two.png' %} alt="emblem">
+                 <span class="text_logo">
+                     <h1>&nbspMila</h1>
+                     <p>&nbspTort</p>
+                 </span>
+             </a>
+         </div>
+         {% if user.is_authenticated %}
+           <div class="welcome-login-div">
+                  <div class="welcome-block-div">
+                    <div id="welcome_lines">
+                        <p class="welcome_text">{{ user.username }}<span>, ласкаво просимо!</span></p>
+                        {% if user.client.discount_client > 0 %}
+                            <p class="discount_text">{{ user.client.discount_client }}<span >%</span><span id="no-red">, Ваша знижка!</span></p>
+                        {% endif %}
+                    </div>
+                    <button type="button" name="logout" onclick="logout()" id="logout_button">&nbspВийти&nbsp</button></dd>
+                </div>
+           </div>
+          {% else %}
+             <div class="login-block-div">
+               <form action="{% url 'login_logout' %}" class="login-block" name="login_welcome" method="POST">
+                   {{ login_form.as_p }}{% csrf_token %}
+                   <dt><label for="login">Логін</label></dt>
+                   <dd><input type="text" name="login_welcome" id="login" autocomplete="username" maxlength="32" >
+                   <button type="button" onclick="call_view()" id="reg_button" value="register_welcome" name="register_welcome">Реєстрація</button></dd>
+                   <dt><label for="password">Пароль</label> <a class="forgot_pass" href="{% url 'password_reset' %}"> ( Забули пароль ? ) </a></dt>
+                   <dd><input type="password" id="password" autocomplete="current-password" name="login_welcome" maxlength="32">
+                   <button type="submit" name="login_welcome" value="login_welcome" id="login_button">&nbspУвійти&nbsp</button></dd>
+                </form>
+               </div>
+          {% endif %}
+            <script type="text/javascript">
+            $(document).ready(function () {
+                 let frm = $('.login-block');
+                    frm.on('submit', function (e) {
+                        let username = $('#login').val();
+                        let password = $('#password').val();
+                        let csrf_token = $('.login-block [name="csrfmiddlewaretoken"]').val();
+                        let data = {};
+                        data["csrfmiddlewaretoken"] = csrf_token;
+                        data.password = password;
+                        data.username = username;
+                        let url = frm.attr("action");
+                        $.ajax({
+                            url: url,
+                            type: 'POST',
+                            data: data,
+                            cache: true,
+                            success: function (data) {
+                                if (data.error){
+                                    $.alert({
+                                        type: 'orange',
+                                        theme: 'material',
+                                        draggable: true,
+                                        useBootstrap: false,
+                                        title: 'Якийсь конфуз!',
+                                        content: data.error,
+                                    });
+                                }
+                                else {
+                                    location.reload();}
+                            },
+                            error: function () {
+                                console.log("login return error")
+                            },
+                        });
+                         e.preventDefault();
+                    });
+            });
+            </script>
+            <script type="text/javascript">
+                function logout() {
+                    let url = "{% url 'login_logout' %}";
+                    console.log(url);
+                    $.ajax({
+                        type: 'POST',
+                        cache: true,
+                        url: url,
+                        headers: {'X-CSRFToken': '{{ csrf_token }}'},
+                        success: function (data) {
+                            if (data.error) {
+                                $.alert({
+                                    type: 'orange',
+                                    theme: 'material',
+                                    draggable: true,
+                                    useBootstrap: false,
+                                    title: 'Якийсь конфуз!',
+                                    content: data.error,
+                                });
+                            }
+                            else {
+                                location.reload();
+                            }
+                        },
+                        error: function () {
+                            console.log("error of logout");
+                            alert('error of logout');
+                        },
+                    })
+                }
+            </script>
+            <script type="text/javascript">
+              function call_view(username, phone, password, email, real_name, focus_in) {
+               function emailValidate(sEmail) {
+                let filter = /^([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
+                if (filter.test(sEmail)) {
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            }
+            $.confirm({
+                title: 'Зареєструйтесь та отримайте персональну знижку!',
+                content: '' +
+                '<form action="" class="formSubmit" name="register_welcome" method="post">'+
+                '<div class="field-group">'+
+                    '<div class="form-group">' +
+                    '<label for="login-reg">Логін *</label>' +
+                        '<div class="form__line">' +
+                            '<input  type="text" id="login-reg" class="name form-control" required />' +
+                            '<span class="form__hint">Обов\'язкове для заповнення</span>'+
+                        '</div>' +
+                    '</div>' +
+                    '<div class="form-group">' +
+                    '<label for="tel-reg">Номер телефону *</label>' +
+                        '<div class="form__line">' +
+                            '<input type="tel" pattern="\d{10}" title="Формат\\зразок: XXXXXXXXXX\\0982548248" id="tel-reg" class="name form-control" required/>' +
+                            '<span class="form__hint">Обов\'язкове для заповнення</span>'+
+                        '</div>' +
+                    '</div>' +
+                '</div>' +
+                '<div class="field-group">'+
+                    '<div class="form-group">' +
+                    '<label for="pass-reg">Пароль *</label>' +
+                        '<div class="form__line">' +
+                            '<input type="password" id="pass-reg" autocomplete="new-password" maxlength="32" class="name form-control" required/>' +
+                            '<span class="form__hint equal">Обов\'язкове для заповнення</span>'+
+                        '</div>' +
+                    '</div>'+
+                    '<div class="form-group">' +
+                    '<label for="pass1-reg">Пароль ще раз *</label>' +
+                        '<div class="form__line">' +
+                            '<input type="password" id="pass1-reg" autocomplete="new-password" maxlength="32" class="name form-control" required/>' +
+                            '<span class="form__hint equal">Обов\'язкове для заповнення</span>'+
+                        '</div>' +
+                    '</div>' +
+                '</div>'+
+
+                 '<div class="field-group">'+
+                    '<div class="form-group">' +
+                    '<label for="e_mail-reg">E-mail</label>' +
+                        '<div class="form__line">' +
+                            '<input type="email" title="Формат: myname@dot.com" id="e_mail-reg" autocomplete="username email" class="name form-control"/>' +
+                            '<span class="form__hint not_email">Обов\'язкове для заповнення</span>'+
+                        '</div>' +
+                    '</div>'+
+                    '<div class="form-group">' +
+                    '<label for="real_name-reg">Як до Вас звертатись?</label>' +
+                        '<div class="form__line">' +
+                            '<input type="text" id="real_name-reg" class="name form-control"/>' +
+                        '</div>' +
+                    '</div>' +
+                '</div>'+
+                '</form>',
+                type: 'orange',
+                theme: 'material',
+                draggable: true,
+                useBootstrap: false,
+                buttons: {
+                    formSubmit: {
+                        text: "Подати",
+                        btnClass: 'btn-blue',
+                        action: function(){
+                            let check = true;
+                            let field = [];
+                            let frm = this.$content.find('form');
+                            frm.find('input[required]').each(function () {
+                               field.push('input[required]');
+                                  let value = $(this).val(),
+                                      line = $(this).closest('.form__line');
+                                  for(let i=0; i<field.length; i++) {
+                                    if( !value ) {
+                                      check = false;
+                                      line.addClass('form__line-required');
+                                      setTimeout(function() {
+                                        line.removeClass('form__line-required')
+                                      }.bind(this),1500);
+                                    }
+                                  }
+                            });
+                            if (!check) return false;
+                            else {
+                                let left = frm.find("input[type=password]").first().val();
+                                let right = frm.find("input[type=password]").last().val();
+                                if (left === right && right && left) check = true; else check = false;
+                                if (!check) {
+                                    frm.find('input[type=password]').each(function () {
+                                        let line = $(this).closest('.form__line');
+                                            $('.equal').text('Не однакові');
+                                            line.addClass('form__line-required');
+                                            setTimeout(function () {
+                                                $('.equal').text('Обов\'язкове для заповнення');
+                                                line.removeClass('form__line-required')
+                                            }.bind(this), 1500);
+                                    });
+                                }
+                                else{
+                                    check = false;
+                                    if (left.length < 3){
+                                        frm.find('input[type=password]').each(function () {
+                                        let line = $(this).closest('.form__line');
+                                            $('.equal').text('Хоча б три символи!');
+                                            line.addClass('form__line-required');
+                                            setTimeout(function () {
+                                                $('.equal').text('Обов\'язкове для заповнення');
+                                                line.removeClass('form__line-required')
+                                            }.bind(this), 1500);
+                                    });
+                                    }
+                                    else check = true;
+                                }
+                            }
+                            if (!check) return false;
+                            else {
+                                 let line = $("#e_mail-reg").closest('.form__line');
+                                 let e_mail = $( "#e_mail-reg" ).val();
+                                   if(!emailValidate(e_mail) && e_mail) {
+                                       check = false;
+                                       $('.not_email').text('Не містить @ чи .');
+                                       line.addClass('form__line-required');
+                                     setTimeout(function() {
+                                       $('.equal').text('Обов\'язкове для заповнення');
+                                       line.removeClass('form__line-required')
+                                       }.bind(this),1500);}
+                            }
+                            if (!check) return false;
+                            else {this.$content.find('form').submit();}
+                        }
+                    },
+                    cancel: {
+                        text: 'Відміна',
+                        action: function () {
+                            //close
+                        }
+                    },
+                },
+                onContentReady: function () {
+                    if (username) {
+                        $('#login-reg').val(username);
+                        if (focus_in === 'username')
+                        {$('#login-reg').focus()}
+                    }
+                    if (phone) {
+                        $('#tel-reg').val(phone);
+                        if (focus_in === 'phone')
+                        {$('#tel-reg').focus()}
+                    }
+                    if (password) {$('#pass-reg').val(password);}
+                    if (password) {$('#pass1-reg').val(password);}
+                    if (email) {
+                        $('#e_mail-reg').val(email);
+                        if (focus_in === 'email')
+                        {$('#e_mail-reg').focus()}
+                    }
+                    if (real_name) {$('#real_name-reg').val(real_name);}
+                    $( "#e_mail-reg" ).blur(function() {
+                        line = $(this).closest('.form__line');
+                        let e_mail = $( "#e_mail-reg" ).val();
+                        if(!emailValidate(e_mail) && e_mail){
+                            $('.not_email').text('Не містить @ чи .');
+                            line.addClass('form__line-required');
+                            setTimeout(function() {
+                                $('.equal').text('Обов\'язкове для заповнення');
+                                line.removeClass('form__line-required')
+                                }.bind(this),1500);}
+
+                    });
+                    let input_mask = this.$content.find('form');
+                    input_mask.find("input[type='tel']").inputmask('0999999999', {
+                        clearMaskOnLostFocus: true,
+                         });
+                    let jc = this;
+                    jc.$content.find('form').on('submit', function (e) {
+                        let username = $('#login-reg').val();
+                        let phone = $('#tel-reg').val();
+                        let password = $('#pass1-reg').val();
+                        let email = $('#e_mail-reg').val();
+                        let real_name = $('#real_name-reg').val();
+                        let data = {};
+                        let url = "{% url 'login_logout' %}";
+                        data.real_name = real_name;
+                        data.email = email;
+                        data.phone = phone;
+                        data.password = password;
+                        data.username = username;
+                        $.ajax({
+                            type: 'POST',
+                            url: url,
+                            data: data,
+                            cache: true,
+                            headers: {'X-CSRFToken': '{{ csrf_token }}'},
+                            success: function(data) {
+                                let focus_in =  ['username','email','phone'];
+                                if (!data.password) {
+                                    if (data.email) {
+                                        alert(data.email);
+                                        focus_in='email';
+                                    }
+                                    if (data.username) {
+                                        alert(data.username);
+                                        focus_in='username';
+                                    }
+                                    if (data.phone) {
+                                        alert(data.phone);
+                                        focus_in='phone';
+                                    }
+                                    call_view(username, phone, password, email, real_name, focus_in);
+                                }
+                                else {
+                                    $('#login').val(data.username);
+                                    $('#password').val(data.password);
+                                    $('#login_button').trigger('click');
+                                }
+                            },
+                            error: function () {
+                                console.log("error of registration");
+                                alert('error of registration');
+                            },
+                        });
+                        e.preventDefault();
+                    });
+                }
+            })
+            }
+            </script>
+          <div class="basket-block">
+              <div class="finish_content none_display">
+                 {% if user.is_authenticated %}
+                      {% if user.client.real_name %}
+                         <p>Ваш заказ,  <span style="color: #259c4a;">{{ user.client.real_name }}</span></p>
+                      {% else %}
+                         <p>Ваш заказ, <span style="color: #259c4a;">{{ user.username }}</span></p>
+                      {% endif %}
+                {% endif %}
+                  <p
+                   {% if not user.is_authenticated %}
+                       id="count-override"
+                      class="-count"
+                  {% endif %}>Кількість товарів: <span
+                          {% if not user.is_authenticated %}
+                               id="finish_total_count"
+                          {% endif %}
+                          class="finish_total_count" style="color: #259c4a">{{ count_orders_in_basket }}</span> </p>
+                  <p
+                  {% if not user.is_authenticated %}
+                      id="sigma-override"
+                      class="-sigma"
+                  {% endif %}
+                  >на суму: <span
+                          {% if not user.is_authenticated %}
+                               id="finish_total_amount"
+                          {% endif %}
+                          class="finish_total_amount">
+                      {% if  total_sum_basket %}
+                            {{ total_sum_basket|floatformat:"2" }}
+                      {% else %}
+                            0.00
+                      {% endif %}
+                  </span></p>
+              </div>
+              <div class="always_content">
+                   <a class="basket" href="#" target="basket-link">&#xf291;</a>
+                   <div class="count_products {{  visible_off }}" id="count_orders_in_basket">{{ count_orders_in_basket }}</div>
+               </div>
+          </div>
+        </div>
+    </header>
+    <div class="content">
+         <div class="basket-symbol">
+              <div id="count_orders_in_basket_circle" class="numberCircle {{  visible_off }}">{{ count_orders_in_basket }}</div>
+              <a class="basket-mobile" href="#" target="basket-link"></a>
+          </div>
+         <div class="container-basket visible_off" id="container-basket-id">
+                <div class="basket-head">
+
+                </div>
+                <ul class="inside_basket" id="inside_basket">
+                    {% include 'inside_basket/inside_basket.html' %}
+                </ul>
+                <div class="footer_basket">
+                    <div class="total">
+                        <p class = "word">Сума:</p>
+                        <span>{{ total_amount|floatformat:"2" }}₴</span>
+                    </div>
+                    <button onclick="window.location.href='{% url 'basket_finish' %}'"
+                            class="confirm_order
+                            {% if count_orders_in_basket <= 0 %}
+                                {{ 'non-active-order' }}
+                            {% endif %}
+                            ">
+                        Оформити заказ
+                    </button>
+                </div>
+         </div>
+            {% block content %}
+            {% endblock %}
+    </div>
+    <script type="text/javascript">
+            window.onscroll = function () {
+                myProduct()
+            };
+            let header = document.getElementById("productHeader");
+            let sticky = header.offsetTop;
+            function  myProduct() {
+                if (window.pageYOffset > sticky) {
+                    header.classList.add("sticky");
+                    $('#container-basket-id').addClass('visible_off');
+                }else{
+                    header.classList.remove("sticky")
+                }
+            }
+    </script>
+
+
+    <!---->
+    <script type="text/javascript">
+         function updateBasket(product, order_delete, weight_or_pcs, do_remove) {
+         let data = {};
+         let change_weight_or_pcs_order = $('.insert_data').attr("data-change_weight_or_pcs_order");
+                    data.product = product;
+                    data.weight_or_pcs = weight_or_pcs;
+                    data.do_remove = do_remove;
+                    data.order_delete = order_delete;
+                    //let update_value = (update_value_str === 'true');
+                    if (change_weight_or_pcs_order)
+                        {data.change_weight_or_pcs_order = change_weight_or_pcs_order;}
+                    let url = "{% url 'order' %}";
+                    $.ajax({
+                        url: url,
+                        type: 'POST',
+                        data: data,
+                        dataType: "json",
+                        cache: true,
+                        headers: {'X-CSRFToken': '{{ csrf_token }}'},
+                        success: function (data) {
+                            if (do_remove === false){
+                            $('.basket').fadeOut(800, function() {
+                                $('.basket').css("color", "#ffffff").fadeIn(1000);
+                            });
+                            $('.basket-mobile').fadeOut(800, function() {
+                                $('.basket-mobile').css("color", "#ffffff").fadeIn(1000);
+                            });}
+                            if (data.count_orders_in_basket){
+                                $('#count_orders_in_basket').text(data.count_orders_in_basket);
+                                $('#count_orders_in_basket_circle').text(data.count_orders_in_basket);
+                                $('.count_products').removeClass('visible_off');
+                                $('.numberCircle').removeClass('visible_off');
+                                $('.confirm_order').removeClass('non-active-order');}
+                            else
+                                {$('.count_products').addClass('visible_off');
+                                $('.numberCircle').addClass('visible_off');
+                                $('.confirm_order').addClass('non-active-order');}
+                            $('.container-basket ul').empty();
+                            $('.total span').text(data.total_amount);
+                            $.each(data.orders, function (k, v) {
+                                let minus = '-';
+                                let percent = '%';
+                                if (v.discount_total === 0) {v.discount_total = ''; minus=''; percent=''}
+                                if (v.unit === 'шт'){weight_or_pcs = parseInt(Math.round(v.weight_or_pcs));}
+                                    else {weight_or_pcs = v.weight_or_pcs }
+                                   $('.container-basket ul').append('<li>' +
+                                        '<div class="one-li" id=' + v.id + '>'+
+                                        '<div class="photo-li">' +
+                                        '<a class="update_order_id" href="'+ v.absolute_slug_product +v.id+ '">'+
+                                        '<div class="small-photo">' +
+                                        '<img src="' + v.photo + '">' +
+                                        '</div>' +
+                                        '</a>'+
+                                        '<div class="pcs_and_price">' +
+                                        '<p class="p_weight_or_pcs">' + weight_or_pcs +
+                                        '<span class="span_units">' + v.unit +
+                                        '</span>' + ' X' +
+                                        '</p>' +
+                                        '<p class="p_price_per_item">' + v.price_per_item +
+                                        '₴</p>' +
+                                        '<p class="p_discount">'+ minus + v.discount_total + percent +
+                                        '</p>' +
+                                        '</div>' +
+                                        '</div>' +
+                                        '<div class="name-li">' +
+                                        '<p class="p_type">' + v.category_plus_type +
+                                        '</p>' +
+                                        '<p class="p_name">' + v.product_name +
+                                        '</p>' +
+                                        '</div>' +
+                                        '<div class="total-li">₴' + v.sum_one +
+                                        '</div>' +
+                                        '<div class="delete-li">' +
+                                        '<a class="delete_item_in_basket" data-order_delete_id ="' + v.id + '"' +
+                                        'href="#" id=' + v.id +
+                                        '>X</a>' +
+                                        '</div>' +
+                                        '</div>' +
+                                        '</li>');
+                            });
+                        },
+                        error: function () {
+                            console.log("error save in db")
+                        },
+
+                    });
+    }
+    </script>
+    <script type="text/javascript">
+            $(".insert_data").on('submit', function (e) {
+                if ($(this).find("[type=number]").val() != '')
+                {
+                    let product = $(this).attr('data-id_form');
+                    let weight_or_pcs = $(this).find("[type=number]").val();
+                    $(this).find('input').val('');
+                    updateBasket(product, order_delete=undefined, weight_or_pcs, do_remove=false);
+                }
+                e.preventDefault();
+            }) ;
+                $('.basket').on('click', function (e){
+                     $('#container-basket-id').toggleClass('visible_off');
+                     e.preventDefault();
+                     e.stopPropagation();
+                });
+                 $('.basket-mobile').on('click', function (e){
+                     $('#container-basket-id').toggleClass('visible_off');
+                     e.preventDefault();
+                     e.stopPropagation();
+                });
+                 $(document).click(function (event) {
+                     if(!$(event.target).closest('#container-basket-id').length) {
+                         if ($('#container-basket-id').is(":visible")) {
+                             $('#container-basket-id').addClass('visible_off');
+                         }
+                     }
+                });
+                $(document).on({ 'click touchend' : function(event) {
+                        if (!$(event.target).closest('#container-basket-id').length) {
+                            if ($('#container-basket-id').is(":visible")) {
+                                $('#container-basket-id').addClass('visible_off');
+                            }
+                        }
+                    }
+                });
+     </script>
+    <script type="text/javascript">
+        $('#main_body').on("click", ".delete_item_in_basket", function(e) {
+            e.preventDefault();
+            let order_delete = $(this).attr('data-order_delete_id');
+            updateBasket(product=undefined, order_delete=order_delete,  weight_or_pcs=undefined, do_remove=true);
+            $('#'+this.id).hide();
+            let el = $('.container-basket ul').find($('#'+this.id));
+            el.parent().addClass('remove_border_bottom');
+        });
+    </script>
+</body>
+  <footer>
+          <div class="copyright">
+                 <span>MilaTort &#169; 2019. Privacy Policy</span>
+                 <span>
+                    Designed by:
+                    <a  class="link" href="mailto:lionsoroma@gmail.com?Subject=Hi" target="_by">Lionso</a>
+                 </span>
+        </div>
+    </footer>
+</html>

@@ -1,0 +1,43 @@
+{% load static %}
+{% load previous %}
+{% for order in orders %}
+                    <li>
+                        <div class="one-li" id={{ order.id }}>
+                            <div class="photo-li">
+                                 <a class="update_order_id" href="{% url 'details_product' slug=order.product.slug_product order_id=order.id %}">
+                                    <div class="small-photo">
+                                            {%  with small_photos_in_order|prev:forloop.counter0 as small_photo_in_order %}
+                                                <img src="{{ small_photo_in_order.photo.url }}">
+                                            {% endwith %}
+                                    </div>
+                                  </a>
+                                <div class="pcs_and_price">
+                                    {% if order.product.get_unit_display == 'кг' %}
+                                        <p class="p_weight_or_pcs">{{ order.weight_or_pcs  }}<span class="span_units">{{ order.product.get_unit_display }}</span> X</p>
+                                    {% else %}
+                                        <p class="p_weight_or_pcs">{{ order.weight_or_pcs|floatformat:"0" }}<span class="span_units">{{ order.product.get_unit_display }}</span> X</p>
+                                    {% endif %}
+                                    <p class="p_price_per_item">{{ order.price_per_item }}₴</p>
+                                    {% if order.discount_total %}
+                                        <p class="p_discount">-{{ order.discount_total }}%</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="name-li">
+                                <p class="p_type"> {{ order.product.category_plus_type_product }}</p>
+                                <p class="p_name"> "{{ order.product.name }}"</p>
+                            </div>
+                             <div class="total-li">
+                                 {%  with sums_order|prev:forloop.counter0 as sum_order %}
+                                    ₴{{ sum_order|floatformat:"2" }}
+                                 {% endwith %}
+                            </div>
+                             <div class="delete-li">
+                                 <a class="delete_item_in_basket"
+                                        data-order_delete_id = "{{ order.id }}"
+                                    href="#" id={{ order.id }}
+                                 >X</a>
+                            </div>
+                        </div>
+                    </li>
+{% endfor %}

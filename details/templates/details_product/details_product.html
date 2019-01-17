@@ -1,0 +1,274 @@
+{% extends 'products/products.html' %}
+{% load staticfiles %}
+{% load static %}
+{% load previous %}
+{% load get_hours %}
+{% load humanize %}
+
+
+{% block title %}
+        MilaTort - {{ details.name }}
+{% endblock %}
+
+{% block content %}
+    <script src="{%  static 'js/owl.carousel.min.js' %}"></script>
+    <script src="{%  static 'js/tabs.js' %}"></script>
+    <script src="{%  static 'js/bootstrap.min.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/details_product.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/owl.carousel.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/owl.theme.default.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/tabs.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/rating_stars.css' %}">
+    <script type="text/javascript">
+     $(document).click(function (event) {
+                     if(!$(event.target).closest('#fancyButton').length) {
+                        $('.commit-text').val('');
+                        $('input[name=rating]:checked').prop('checked', false);
+                     }
+                });
+    </script>
+
+    <div class="detail_product">
+       <div class="left_detail-block">
+                <div id="wrapper-product">
+                    <div id="slider-product" class="left_slide-photo owl-carousel owl-theme">
+                        {% for details_photo in details_photos %}
+                            <div style="background-image: url({{ details_photo.photo.url }})"></div>
+                        {% endfor %}
+                    </div>
+                </div>
+      </div>
+      <div class="right_detail-block">
+        <section id="fancyTabWidget" class="tabs t-tabs">
+            <ul class="nav nav-tabs fancyTabs" role="tablist">
+                        <li class="tab fancyTab
+                        {% if active_fancy_tab_id == 1 %}
+                        active
+                        {% endif %}
+                        ">
+                        <div class="arrow-down"><div class="arrow-down-inner"></div></div>
+                            <a id="tab0"  onclick="showAddCommit(0)" href="#tabBody0" role="tab" aria-controls="tabBody0" aria-selected="true" data-toggle="tab" tabindex="0"><p class="fa">&#xf249;</p><span class="hidden-xs">Опис</span></a>
+                            <div class="whiteBlock"></div>
+                        </li>
+                        <li class="tab fancyTab
+                        {% if active_fancy_tab_id == 2 %}
+                        active
+                        {% endif %}
+                        ">
+                        <div class="arrow-down"><div class="arrow-down-inner"></div></div>
+                            <a id="tab1" onclick="showAddCommit(0)" href="#tabBody1" role="tab" aria-controls="tabBody1" aria-selected="true" data-toggle="tab" tabindex="0"><p class="fa">&#xf05a;</p><span class="hidden-xs">Інфо</span></a>
+                            <div class="whiteBlock"></div>
+                        </li>
+                        <li class="tab fancyTab
+                        {% if active_fancy_tab_id == 3 %}
+                        active
+                        {% endif %}
+                        ">
+                        <div class="arrow-down"><div class="arrow-down-inner"></div></div>
+                            <a id="tab2" onclick="showAddCommit(1)" href="#tabBody2" role="tab" aria-controls="tabBody2" aria-selected="true" data-toggle="tab" tabindex="0"><p class="fa">&#xf086;</p><span class="hidden-xs">Відгуки</span></a>
+                            <div class="whiteBlock"></div>
+                        </li>
+
+            </ul>
+            <div id="myTabContent" class="tab-content fancyTabContent" aria-live="polite">
+                        <div class="tab-pane fade
+                                 {% if active_fancy_tab_id == 1 %}
+                                    active in
+                                 {% endif %}
+                                " id="tabBody0" role="tabpanel" aria-labelledby="tab0" aria-hidden="false" tabindex="0">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <h2>{{ details.name }}</h2>
+                                        {% if details.product_description %}
+                                            <p>&nbsp&nbsp{{ details.product_description }}</p>
+                                        {% else %}
+                                            <p style="color: darkgray ">(опис відсутній)</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                        </div>
+                        <div class="tab-pane fade
+                        {% if active_fancy_tab_id == 2 %}
+                                    active in
+                         {% endif %}
+                        " id="tabBody1" role="tabpanel" aria-labelledby="tab1" aria-hidden="true" tabindex="0">
+                            <div class="row">
+                                    <div class="col-md-12">
+                                        <h2>Детальна інформація:</h2>
+                                        <p>Дата замовлення: <span class="bold">{{ details.dates_add }}</span> </p>
+                                        <p>Дата останньої редакції: <span class="bold">{{ details.dates_renovation }}</span> </p>
+                                        <p>Знижка на продукт:
+                                            {% if details.discount_product  %}
+                                                <span class="bold">{{ details.discount_product }}%</span>
+                                            {% else %}
+                                                <span class="bold">–</span>
+                                            {% endif %}
+                                        </p>
+                                        <p>Кількість фото: <span class="bold">{{ count_of_photos }}</span> </p>
+                                        {% if details.get_unit_display == 'кг' %}
+                                            <p>Ціна без знижок: <span class="bold">
+                                                {% if details.category_plus_type_product.category.is_staff %}
+                                                    <span class="bold">+</span>
+                                                {% endif %}
+                                                {{ details.price }} грн/кг</span> </p>
+                                        {% else %}
+                                            <p>Ціна без знижок: <span class="bold">
+                                                 {% if details.category_plus_type_product.category.is_staff %}
+                                                    <span class="bold">+</span>
+                                                {% endif %}
+                                                {{ details.price }} грн/шт</span> </p>
+                                        {% endif %}
+                                        <p class="exclude">Оцінка виробу:
+                                            {% if  details.average_rating %}
+                                                {% for x_star in "x"|rjust:"10" %}
+                                                    {% if forloop.counter0|divisibleby:2 %}
+                                                        {% if forloop.counter0 in loop_times %}
+                                                            {% if forloop.counter0|add:1 == loop_times|length %}
+                                                                <span class="star-static-half">&#xf5c0;</span>
+                                                             {% else %}
+                                                                <span class="star-static-fill">&#xf005;</span>
+                                                             {% endif %}
+                                                        {% else %}
+                                                                <span class="star-static-border">&#xf005;</span>
+                                                        {% endif %}
+                                                    {% endif %}
+                                                {% endfor %}
+                                            {% else %}
+                                                <span class="bold">(наразі немає)</span>
+                                            {% endif %}
+                                        </p>
+
+                                        <p>Час виготовлення~:
+                                            {% if details.cooking_time|get_hours %}
+                                                <span class="bold">
+                                                     {% if details.category_plus_type_product.category.is_staff %}
+                                                        <span class="bold">+</span>
+                                                    {% endif %}
+                                                    {{ details.cooking_time|get_hours }}</span>
+                                            {% else %}
+                                                <span class="bold"> (не вказано) </span>
+                                            {% endif %}
+                                        </p>
+                                    </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane  fade
+                        {% if active_fancy_tab_id == 3 %}
+                                    active in
+                        {% endif %}
+                        " id="tabBody2" role="tabpanel" aria-labelledby="tab2" aria-hidden="true" tabindex="0">
+                            <div class="row" id="base_commit">
+                                {% include 'list_of_comments/list_of_comments.html' %}
+                            </div>
+                        </div>
+            </div>
+        </section>
+        <script>
+            function showAddCommit(bool_vav){
+                if (bool_vav === 1){
+                     let max_width = $('.right_detail-block').width();
+                    $('.speech-bubble-ds').css('max-width', max_width);
+                    $('.commit-post').removeClass('commit_no');
+                    $(".comments-block").animate({ scrollTop: $("#auto-scroll").height() * parseInt("{{ comments.count|safe }}") }, "slow");
+                    }
+                else
+                    {$('.commit-post').addClass('commit_no');}
+            }
+        </script>
+        <section id="fancyButton">
+             <div class="commit-post commit_no">
+                <form class="commit-send-form" action="{% url 'send_commit' %}">
+                  <textarea rows='3' cols="45" placeholder="Відгук залишати тут (макс. 1024 символи)..." class="commit-text"></textarea>
+                  {% if user.is_authenticated and basket_present %}
+                        <div class="rating-button-send">
+                          <fieldset class="rate">
+                            <input type="radio" id="rating10" name="rating" value="10" /><label for="rating10" title="5 stars"></label>
+                            <input type="radio" id="rating9" name="rating" value="9" /><label class="half" for="rating9" title="4 1/2 stars"></label>
+                            <input type="radio" id="rating8" name="rating" value="8" /><label for="rating8" title="4 stars"></label>
+                            <input type="radio" id="rating7" name="rating" value="7" /><label class="half" for="rating7" title="3 1/2 stars"></label>
+                            <input type="radio" id="rating6" name="rating" value="6" /><label for="rating6" title="3 stars"></label>
+                            <input type="radio" id="rating5" name="rating" value="5" /><label class="half" for="rating5" title="2 1/2 stars"></label>
+                            <input type="radio" id="rating4" name="rating" value="4" /><label for="rating4" title="2 stars"></label>
+                            <input type="radio" id="rating3" name="rating" value="3" /><label class="half" for="rating3" title="1 1/2 stars"></label>
+                            <input type="radio" id="rating2" name="rating" value="2" /><label for="rating2" title="1 star"></label>
+                            <input type="radio" id="rating1" name="rating" value="1" /><label class="half" for="rating1" title="1/2 star"></label>
+                            <input type="radio" id="rating0" name="rating" value="0" /><label for="rating0" title="No star"></label>
+                        </fieldset>
+                        <button type="submit" class="commit-send">Залишити</button>
+                      </div>
+                  {% else %}
+                       <div class="rating-button-send">
+                           <span class="non-active-star"><span style="font-family: FA-regular;">&#xf005;</span>&#xf005;&#xf005;&#xf005;&#xf005;&#xf005;</span>
+                        <button type="submit" class="commit-send" style="pointer-events: none; color: darkgray">Залишити</button>
+                       </div>
+                  {% endif %}
+                </form>
+           </div>
+           <script type="text/javascript">
+             $(".commit-send-form").on('submit', function (e) {
+             let rating = $('input[name=rating]:checked').val();
+             e.preventDefault();
+             let max_width = $('.right_detail-block').width();
+             let data = {};
+             let r_commit = $(this).find('textarea').val();
+             let url = $(this).attr("action");
+                        if (r_commit || rating) {
+                            if (rating !=0 || r_commit){
+                                data.r_commit = r_commit;
+                                data.rating = rating;
+                                $.ajax({
+                                    url: url,
+                                    type: 'POST',
+                                    data: data,
+                                    cache: true,
+                                    headers: {'X-CSRFToken': '{{ csrf_token }}'},
+                                    success: function (data) {
+                                        $('.commit-text').val('');
+                                        $('input[name=rating]:checked').prop('checked', false);
+                                        $("#base_commit").html(data);
+                                        $('#base_commit').slideDown('slow', function () {
+                                            $('.speech-bubble-ds').css('max-width', max_width);
+                                        });
+                                    }
+                                });
+                            }
+                        }
+             })
+           </script>
+           <form class="insert_data" action="{% url 'order' %}" id="{{ details.id }}"
+                            data-id_form = "{{ details.id }}" data-change_weight_or_pcs_order={{ change_weight_or_pcs_order }}> <!-- true -->
+                        <label for="{{ details.slug_product }}">Вага/кількість:</label>
+                        <input id="{{ details.slug_product }}"
+                               {% if weight_or_pcs %}
+                                    value="{{ weight_or_pcs|stringformat:"1.1f" }}"
+                               {% endif %}
+                               type="number"
+                               min="2"
+                               step="0.1"
+                               maxlength="8"
+                               size="8"
+                               placeholder="від 2 кг/шт">
+                        <button type="submit"
+                            class="in_cart
+                            {% if details.category_plus_type_product.category.is_staff %}
+                                {{ 'non-active-order' }}
+                            {% endif %}
+                            "
+                            ><span
+                            class="cart_on_button_details" >&#xf291;&nbsp&nbsp</span>&nbspВ кошик
+                        </button>
+                    </form>
+
+        </section>
+       </div>
+    </div>
+     <script>
+            let owl = $('#slider-product');
+            owl.owlCarousel({
+                items: 1,
+                loop: true,
+                nav: true,
+                dots: false,
+            });
+        </script>
+{% endblock %}
