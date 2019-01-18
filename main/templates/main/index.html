@@ -241,17 +241,6 @@
         </div>
     </section>
     <script type="text/javascript">
-    ellipsizeTextBox('signature-id');
-
-    function ellipsizeTextBox(id) {
-    var el = document.getElementById(id);
-    var wordArray = el.innerHTML.split(' ');
-    while(el.scrollHeight > el.offsetHeight) {
-        wordArray.pop();
-        el.innerHTML = wordArray.join(' ') + '...';
-     }
-    }
-
     $(document).ready(function () {
                     let submitter;
                     $('button:submit').click(function () {
