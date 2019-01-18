@@ -1,0 +1,103 @@
+.star-static-fill{
+  color: #FFD700;
+  font-size: 0.9rem;
+  font-family: FA-solid;
+}
+.star-static-border{
+  color: #FFD700;
+  font-size: 0.9rem;
+  font-family: FA-regular;
+}
+.star-static-half{
+  color: #FFD700;
+  font-size: 0.9rem;
+  font-family: FA-solid;
+}
+.stars-background{
+    width: 100%;
+    padding: 0;
+    font-size: 14px;
+    display: inline-block;
+    margin: -13px 0 0 0px;
+    position: absolute;
+    line-height: 0;
+}
+.star-static-fill-small{
+  color: #FFD700;
+  font-family: FA-solid;
+  margin: -2.5px;
+}
+.star-static-border-small:before{
+  color: #FFD700;
+  font-family: FA-regular;
+  position: absolute;
+  content: "\f005 ";
+}
+.star-static-border-small{
+  color: #FFFFFF;
+  font-family: FA-solid;
+  margin: -2.5px;
+}
+.star-static-half-small{
+   margin: -2.5px;
+  color: #FFFFFF;
+  font-family: FA-solid;
+}
+.star-static-half-small:before{
+  position: absolute;
+  color: #FFD700;
+  font-family: FA-solid;
+  content: "\f5c0 ";
+}
+.rate {
+    padding: 0;
+    display: inline-block;
+    border: 0;
+}
+.rate > input {
+    display: none;
+}
+.rate > label {
+    float: right;
+}
+.rate > label:before {
+    display: inline-block;
+    font-size: 0.7rem;
+    padding: .15rem .1rem;
+    margin: -1px;
+    cursor: pointer;
+    font-family: FA-solid;
+    content: "\f005 "; /* full star */
+}
+.rate > label:last-child:before {
+    font-family: FA-regular;
+    content: "\f005 ";
+}
+.rate .half:before {
+    top: 7.5px;
+    content: "\f089 "; /* half star no outline */
+    position: absolute;
+    padding-right: 0;
+}
+.rate input:checked ~ label, /* color current and previous stars on checked */
+.rate label:hover,
+.rate label:hover ~ label {
+  color: #73B100;
+}
+.rate input:checked + .rate label:hover,
+.rate input:checked ~ .rate label:hover, /* highlight current and previous stars */
+.rate input:checked ~ .rate label:hover ~ .rate label, /* highlight previous selected stars for new rating */
+.rate label:hover ~ .rate input:checked ~ .rate label /* highlight previous selected stars */ {
+  color: #A6E72D;
+}
+.non-active-star{
+  position: relative;
+  margin: 0 auto;
+  margin-bottom: 15%;
+  float: right;
+  color: darkgray;
+  font-size: 0.7rem;
+  font-family: FA-solid;
+  top: 7px;
+  letter-spacing: 1.3px;
+}
