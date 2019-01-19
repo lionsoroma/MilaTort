@@ -80,7 +80,7 @@ DEFAULT_FROM_EMAIL = 'MilaTort Team <noreply@example.com>'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'register/templates')]
+        'DIRS': []
         ,
         'APP_DIRS': True,
         'OPTIONS': {
@@ -179,18 +179,16 @@ SESSION_ENGINE = 'products.session_backend'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'static', 'static_dev'),
+)
+
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 MEDIA_URL = '/media/'
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'static', 'static_dev'),
-)
-STATIC_ROOT = os.path.join(BASE_DIR, 'static', 'static_prod')
-TEMPLATE_DIRS = (
-    os.path.join(BASE_DIR, 'register/templates'),
-)
 
+STATIC_ROOT = os.path.join(BASE_DIR, 'static', 'static_prod')
 
 LOGIN_REDIRECT_USER = '/store/'
