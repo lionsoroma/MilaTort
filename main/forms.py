@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from orders.models import Order
+from main.models import Client
 import random
 import string
 
@@ -26,12 +27,17 @@ class ClientForm(forms.ModelForm):
         username = self.cleaned_data['username']
         phone = self.cleaned_data['phone']
         email = self.cleaned_data['email']
-        new_user = User.objects.create(username=username, last_name=last_name, first_name=first_name,
-                                                    email=email)
-        new_user.client.phone = phone
-        new_user.set_password(generate_pw())
-        new_user.client.real_name = last_name+' '+first_name
-        new_user.save()
+        try:
+            new_client = Client.objects.get(phone=phone)
+        except Client.DoesNotExist:
+            new_user = User.objects.create(username=username, last_name=last_name, first_name=first_name,
+                                           email=email)
+            new_user.client.phone = phone
+            new_user.set_password(generate_pw())
+            new_user.client.real_name = last_name + ' ' + first_name
+            new_user.save()
+        else:
+            return new_client
         return new_user.client
 
 
