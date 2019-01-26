@@ -519,26 +519,6 @@ a:hover {
     color: #ffffff;
     font-family: FA-solid, sans-serif;
 }
-a.button{
-    background: #333333;
-    color: #bbbbbb;
-    left: calc(50% - 7.3rem);
-    left: -webkit-calc(50% - 7.3rem);
-    display: inline-block;
-    padding: 1vmin 3vmin;
-    margin: 4vmin auto 4vmin auto;
-    text-decoration: none;
-    vertical-align: middle;
-    font-weight: 700;
-    font-family: Raleway-SemiBold, sans-serif;
-    text-transform: uppercase;
-    font-size: 0.85rem;
-    border-radius: 5px;
-    position: relative;
-}
-a.button:active {
-    top: -1px;
-}
 .blocks{
     display: flex;
     flex-direction: row;

@@ -136,11 +136,6 @@
     .text-all>p{
     font-size: 0.75rem;
     }
-    a.button{
-    left: calc(50% - 5.3rem);
-    left: -webkit-calc(50% - 5.3rem);
-    font-size: 0.75rem;
-    }
     button[type=submit]{
     font-size: 0.75rem;
     margin: 4vmin 0.5vmin;
@@ -200,10 +195,6 @@
     }
       .container:last-child{
         padding: 2% 9%;
-    }
-    a.button{
-    left: calc(50% - 6rem);
-    left: -webkit-calc(50% - 6rem);
     }
     .nav a{
         font-size: 0.7rem;
