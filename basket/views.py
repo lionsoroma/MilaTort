@@ -127,22 +127,22 @@ def basket_finish(request):
         discount_base_max_delivery = 0
         total_discount_delivery_max = 0
         delivery_price_max = Product.objects.filter(price=max_price).first()
-        if delivery_price_max and delivery_price_max.discount_product:
-            discount_base_max_delivery = delivery_price_max.discount_product
         if client:
             total_discount_delivery_max = discount_base_max_delivery + client.discount_client
-        delivery_price_max_with_discount = max_price - ((max_price / 100) * total_discount_delivery_max)
+        if delivery_price_max and delivery_price_max.discount_product:
+            discount_base_max_delivery = delivery_price_max.discount_product
+            delivery_price_max_with_discount = max_price - ((max_price / 100) * total_discount_delivery_max)
         min_price = Product.objects.filter(category_plus_type_product__category__is_staff=True,
                                            category_plus_type_product__category__accessibility=False).aggregate(Min('price'))['price__min']
         delivery_price_min_with_discount = min_price
         discount_base_min_delivery = 0
         total_discount_delivery_min = 0
         delivery_price_min = Product.objects.filter(price=min_price).first()
-        if delivery_price_min and delivery_price_min.discount_product:
-            discount_base_min_delivery = delivery_price_min.discount_product
         if client:
             total_discount_delivery_min = discount_base_min_delivery + client.discount_client
-        delivery_price_min_with_discount = min_price - ((min_price / 100) * total_discount_delivery_min)
+        if delivery_price_min and delivery_price_min.discount_product:
+            discount_base_min_delivery = delivery_price_min.discount_product
+            delivery_price_min_with_discount = min_price - ((min_price / 100) * total_discount_delivery_min)
     return render(request, 'basket_finish/basket_finish.html', locals())
 
 
