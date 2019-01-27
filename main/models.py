@@ -71,7 +71,10 @@ class Client(models.Model):
                                 verbose_name='Адреса', help_text="Адреса доставки/проживання")
 
     def __str__(self):
-        return self.real_name
+        if self.real_name:
+            return self.real_name
+        else:
+            return self.user.username
 
     class Meta:
         verbose_name = "Клієнт"
