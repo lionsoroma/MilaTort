@@ -127,7 +127,7 @@ def basket_finish(request):
         discount_base_max_delivery = 0
         total_discount_delivery_max = 0
         delivery_price_max = Product.objects.filter(price=max_price).first()
-        if delivery_price_max.discount_product:
+        if delivery_price_max and delivery_price_max.discount_product:
             discount_base_max_delivery = delivery_price_max.discount_product
         if client:
             total_discount_delivery_max = discount_base_max_delivery + client.discount_client
@@ -138,7 +138,7 @@ def basket_finish(request):
         discount_base_min_delivery = 0
         total_discount_delivery_min = 0
         delivery_price_min = Product.objects.filter(price=min_price).first()
-        if delivery_price_min.discount_product:
+        if delivery_price_min and delivery_price_min.discount_product:
             discount_base_min_delivery = delivery_price_min.discount_product
         if client:
             total_discount_delivery_min = discount_base_min_delivery + client.discount_client
