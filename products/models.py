@@ -61,7 +61,7 @@ class Type(models.Model):
                               help_text='Тип продукту відносно категорії. Наприклад: Весільний, Дитячий для торта або Банановий, Смородиновий для зефіру.')
     direction_type = models.IntegerField(validators=[MaxValueValidator(999), MinValueValidator(0)],
                                         verbose_name='Пріорітет показу', blank=False, null=False, unique=True,
-                                        help_text="Порядок показу типу(відносно категорії): менше значить вище")
+                                        help_text="Порядок показу типу(загальний: для всіх типів): менше значить вище")
     type_description = models.TextField(max_length=256, null=True, verbose_name='Опис типу', blank=True,
                                         help_text='Опис типу, який відображатиметься на сайті.')
     category_plus_type = models.CharField(max_length=50, null=True, blank=True, editable=False, verbose_name='Категорія+Тип продукту:',
@@ -95,7 +95,7 @@ class Product(models.Model):
     discount_product = models.IntegerField(default=0, validators=[MaxValueValidator(50), MinValueValidator(0)],
                                            help_text='Увага: знижка на продукт сумується зі знижкою клієнта. Можливі значення: 0 - 50',
                                            verbose_name='Знижка на продукт, %')
-    product_description = models.TextField(max_length=255, null=True, blank=True, help_text="Опис продукту, який відображатиметься на сайті.", verbose_name='Опис продукту')
+    product_description = models.TextField(max_length=512, null=True, blank=True, help_text="Опис продукту, який відображатиметься на сайті. Макс.: 512 символів.", verbose_name='Опис продукту')
     slug_product = models.SlugField(max_length=128, editable=False, blank=True, null=True, unique=True)
     comments = models.ManyToManyField(Comment, related_name='commits_from_product', verbose_name='Коментарі / відгуки',
                                       blank=True)
