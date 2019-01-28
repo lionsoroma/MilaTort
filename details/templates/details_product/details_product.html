@@ -105,6 +105,7 @@
                                             {% endif %}
                                         </p>
                                         <p>Кількість фото: <span class="bold">{{ count_of_photos }}</span> </p>
+                                        <p>Кількість відгуків: <span class="bold">{{ details.comments.count }}</span></p>
                                         {% if details.get_unit_display == 'кг' %}
                                             <p>Ціна без знижок: <span class="bold">
                                                 {% if details.category_plus_type_product.category.is_staff %}
