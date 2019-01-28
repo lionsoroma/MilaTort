@@ -80,7 +80,7 @@
                                     <div class="col-md-12">
                                         <h2>{{ details.name }}</h2>
                                         {% if details.product_description %}
-                                            <p>&nbsp&nbsp{{ details.product_description }}</p>
+                                            <p>&nbsp&nbsp{{ details.product_description|linebreaks }}</p>
                                         {% else %}
                                             <p style="color: darkgray ">(опис відсутній)</p>
                                         {% endif %}

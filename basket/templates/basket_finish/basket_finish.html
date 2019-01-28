@@ -352,7 +352,7 @@
                       <div class="right_part">
                           <div class="description_content">
                                {% if order.product.product_description %}
-                                   <p>&nbsp&nbsp&nbsp{{ order.product.product_description }}</p>
+                                   <p>&nbsp&nbsp&nbsp{{ order.product.product_description|linebreaks }}</p>
                                {% else %}
                                    <p>(опис відсутній)</p>
                                {% endif %}
