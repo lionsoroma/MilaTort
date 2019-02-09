@@ -43,7 +43,7 @@
                         <div class="speech-bubble-ds-arrow"></div>
                     </div>
                 {% endfor %}
-                {% if not user.is_authenticated and not basket_present %}
+                {% if not user.is_authenticated or not basket_present %}
                      <div class="speech-bubble-ds system_commit">
                          <p><strong>system:</strong></p>
                          <p style="font-size: 0.8rem; color: darkgray; font-style: italic;">"Щоб отримати можливість залишити відгук Ви повинні залогінитись чи зареєструватись. Також повинно бути зевершене бодай одне замовлення"</p>
