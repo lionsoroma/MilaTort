@@ -52,11 +52,11 @@
                     <label for="{{ product.slug_product }}">Вага чи кількість</label>
                     <input id="{{ product.slug_product }}"
                            type="number"
-                           min="2"
-                           step="0.1"
+                           min="{{ product.category_plus_type_product.min_quantity }}"
+                           step="{{ product.category_plus_type_product.step_for_min_quantity|stringformat:"f" }}"
                            maxlength="8"
                            size="8"
-                           placeholder="від 2 кг/шт">
+                           placeholder="від {{ product.category_plus_type_product.min_quantity }} кг/шт">
                     <button type="submit"
                         class="in_cart
                         {% if product.category_plus_type_product.category.is_staff %}

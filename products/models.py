@@ -59,6 +59,14 @@ class Type(models.Model):
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, verbose_name='Категорія')
     typeof = models.CharField(max_length=25, null=False, blank=False, verbose_name='Тип продукту',
                               help_text='Тип продукту відносно категорії. Наприклад: Весільний, Дитячий для торта або Банановий, Смородиновий для зефіру.')
+
+    min_quantity = models.IntegerField(validators=[MaxValueValidator(999), MinValueValidator(1)], blank=True, null=True,
+                                         verbose_name='Мінімально можлива кількість до замовлення:', default=1,
+                                         help_text="Мінімальна кількість шт чи кг, яку можна замовити. Вказується для типу продуктів в цілому. "
+                                                   "Значення по замовчуванню(якщо не вказати): 1")
+    step_for_min_quantity = models.FloatField(blank=True, null=True, verbose_name='Крок збільшення/зменшення для кількості', default=0.1,
+                                                help_text = "Рекомендації: 0.1 для вагових продуктів та 1 для продуктів, "
+                                                "що продаються поштучно. Значення по замовчуванню (якщо не вказати): 0.1")
     direction_type = models.IntegerField(validators=[MaxValueValidator(999), MinValueValidator(0)],
                                         verbose_name='Пріорітет показу', blank=False, null=False, unique=True,
                                         help_text="Порядок показу типу(загальний: для всіх типів): менше значить вище")

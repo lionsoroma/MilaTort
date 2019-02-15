@@ -118,35 +118,25 @@
        }
       </script>
       <script type="text/javascript">
-         function decrement(e, order_id, unit) {
+         function decrement(e, order_id, min_quantity, step_for_min_quantity) {
              e.preventDefault();
          let editable_weight_or_pcs = $('#'+order_id+'.pro_weight_or_pcs');
          let change_value = parseFloat((editable_weight_or_pcs.text()).replace(/,/g,'.'));
-         if (unit === 'kg') {
-              if (change_value > 2){
-             change_value = change_value - 0.1;
+         let step_for_min_quantity_float = parseFloat((step_for_min_quantity).replace(/,/g,'.'));
+         if (change_value > min_quantity){
+             change_value = change_value - step_for_min_quantity_float;
              change_value = Math.round(change_value * 100) / 100;}
-         }
-         else {
-              if (change_value > 2){
-             change_value = change_value - 1;
-             change_value = Math.round(change_value * 100) / 100;}
-         }
          editable_weight_or_pcs.text(((change_value).toString()).replace('.',','));
          update_finish_basket(order_id);
          };
-         function increment(e, order_id, unit) {
+         function increment(e, order_id, step_for_min_quantity) {
               e.preventDefault();
          let editable_weight_or_pcs = $('#'+order_id+'.pro_weight_or_pcs');
          let change_value = parseFloat((editable_weight_or_pcs.text()).replace(/,/g,'.'));
-         if (unit === 'kg'){
-             change_value = change_value + 0.1;
-             change_value = Math.round(change_value * 100) / 100;
-         }
-         else {
-             change_value = change_value + 1;
-             change_value = Math.round(change_value * 100) / 100;
-         }
+         let step_for_min_quantity_float = parseFloat((step_for_min_quantity).replace(/,/g,'.'));
+         console.log(step_for_min_quantity_float);
+         change_value = change_value + step_for_min_quantity_float;
+         change_value = Math.round(change_value * 100) / 100;
          editable_weight_or_pcs.text(((change_value).toString()).replace('.',','));
          update_finish_basket(order_id);
          };
@@ -325,7 +315,7 @@
                                      <span class="span_currency">₴</span>
                             </div>
                             <div class="plus_minus">
-                                <div style="display: inline-block"><a href="#" class="plus_minus_decor" onclick="decrement(event, '{{ order.id }}','{{ order.product.unit }}')" id="minus_item"><span class="minus-symbol">&#xf068;</span></a></div>
+                                <div style="display: inline-block"><a href="#" class="plus_minus_decor" onclick="decrement(event, '{{ order.id }}', '{{ order.product.category_plus_type_product.min_quantity }}', '{{ order.product.category_plus_type_product.step_for_min_quantity }}')" id="minus_item"><span class="minus-symbol">&#xf068;</span></a></div>
                                 <div style="display: inline-block">
                                 <div class="width_weight_or_pcs">
                                      {% if order.product.get_unit_display == 'кг' %}
@@ -337,7 +327,7 @@
                                      {% endif %}
                                 </div>
                                 </div>
-                                <div style="display: inline-block"><a href="#" class="plus_minus_decor" onclick="increment(event, '{{ order.id }}','{{ order.product.unit }}')" id="plus_item"><span class="plus-symbol">&#xf067;</span></a></div>
+                                <div style="display: inline-block"><a href="#" class="plus_minus_decor" onclick="increment(event, '{{ order.id }}', '{{ order.product.category_plus_type_product.step_for_min_quantity }}')" id="plus_item"><span class="plus-symbol">&#xf067;</span></a></div>
                             </div>
                             <div class="row_sum_ok">
                                 <span class="final_price_table">

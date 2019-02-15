@@ -244,11 +244,11 @@
                                     value="{{ weight_or_pcs|stringformat:"1.1f" }}"
                                {% endif %}
                                type="number"
-                               min="2"
-                               step="0.1"
+                               min="{{ details.category_plus_type_product.min_quantity }}"
+                               step="{{ details.category_plus_type_product.step_for_min_quantity|stringformat:"f" }}"
                                maxlength="8"
                                size="8"
-                               placeholder="від 2 кг/шт">
+                               placeholder="від {{ details.category_plus_type_product.min_quantity }} кг/шт">
                         <button type="submit"
                             class="in_cart
                             {% if details.category_plus_type_product.category.is_staff %}
