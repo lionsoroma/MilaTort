@@ -15,7 +15,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY_')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['104.248.128.176', 'www.milatort.te.ua', 'http://milatort.te.ua']
+ALLOWED_HOSTS = ['104.248.128.176', 'www.milatort.te.ua', 'milatort.te.ua']
 
 
 # Application definition
