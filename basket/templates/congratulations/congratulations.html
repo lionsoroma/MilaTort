@@ -81,7 +81,7 @@
                              <div>
                                   {%  with small_names_in_stuff|prev:forloop.counter0 as small_name_in_stuff %}
                                       {% if small_name_in_stuff %}
-                                        <h4>Начинка: "{{ small_name_in_stuff.name }}"</h4>
+                                        <h4>Начинка: "{{ small_name_in_stuff.category_plus_type_product.typeof }} - {{ small_name_in_stuff.name }}"</h4>
                                         <h4>
                                         <span> +{{ small_name_in_stuff.price }}грн/кг</span>
                                           {% if small_name_in_stuff.discount_product %}
