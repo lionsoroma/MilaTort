@@ -93,8 +93,7 @@
 .form__line_basket_date{
   margin-bottom: 2.8rem;
   display: inline-block;
-
-
+  height: 100%;
   position: relative;
 }
 .form__line-required_date{
