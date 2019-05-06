@@ -72,7 +72,6 @@ def basket_finish(request):
             discount_stuff_in = discount_stuff_in + client.discount_client
         price_stuff_in = price_stuff_in - ((price_stuff_in / 100) * discount_stuff_in)
         full_stuff_prices_with_discount.append(price_stuff_in)
-
     super_orders = Order.objects.filter(client=client, present_in_basket=True, product__category_plus_type_product__category__is_staff=False,
                                  session_key=session_key, status_of_order='new').order_by('dates_order')
     with_hours = super_orders.filter(product__cooking_time__isnull=False)
@@ -197,6 +196,7 @@ def inform_service(basket_items):
                                 small_photos_in_stuff.append(None)
                     else:
                         small_names_in_stuff.append(None)
+                        small_photos_in_stuff.append(None)
                 context.update({'small_photos_in_order': small_photos_in_order})
                 context.update({'small_photos_in_stuff': small_photos_in_stuff})
                 context.update({'small_names_in_stuff': small_names_in_stuff})
