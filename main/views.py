@@ -81,9 +81,14 @@ def main(request):
     categories = Category.objects.filter(accessibility=True).order_by('direction_cat')
     types = Type.objects.filter(is_active=True).order_by('direction_type')
     products = Product.objects.filter(price__exact=True)
-    min_prices = []
+    min_prices_counts_units = []
     for any_type in types:
-        min_prices.append(Product.objects.filter(category_plus_type_product_id=any_type.id, is_active=True).order_by('price').first())
+        temporary = Product.objects.filter(category_plus_type_product_id=any_type.id, is_active=True).order_by('price')
+        if temporary:
+            min_prices_counts_units.append({'min_price_of_this_type': temporary.first().price, 'count_of_this_type':
+                temporary.count(), 'unit_of_this_type': temporary.first().get_unit_display()})
+        else:
+            min_prices_counts_units.append(None)
     if request.method == 'POST':
         submitter = request.POST['submitter']
         username = request.POST['username']

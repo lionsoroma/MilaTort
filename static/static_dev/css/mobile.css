@@ -63,6 +63,9 @@
     .link-text-commit p{
     font-size: 0.7rem;
     }
+    .units{
+    font-size: 0.5rem;
+    }
     .text-block{
     -webkit-line-clamp: 8;
     -webkit-box-orient: vertical;
@@ -130,7 +133,7 @@
     font-size: 1rem;
     }
     .price-value{
-    font-size: 1.35rem;
+    font-size: 1.30rem;
     }
     .text-all>p{
     font-size: 0.75rem;
@@ -192,6 +195,9 @@
      .link-text-commit p{
     font-size: 0.65rem;
     }
+    .units{
+    font-size: 0.55rem;
+    }
       .container:last-child{
         padding: 2% 9%;
     }
@@ -238,7 +244,7 @@
     font-size: 1rem;
     }
     .price-value{
-    font-size: 1.25rem;
+    font-size: 1.20rem;
     }
     .text-all>p{
     font-size: 0.75rem;
@@ -278,8 +284,11 @@
     .text-all>a {
     font-size: 1.05rem;
     }
+    .units{
+    font-size: 0.6rem;
+    }
     .price-value{
-    font-size: 1.3rem;
+    font-size: 1.25rem;
     }
     .text-all>p{
     font-size: 0.8rem;
@@ -303,6 +312,9 @@
     }
       .container:last-child{
         padding: 2% 11%;
+    }
+    .units{
+    font-size: 0.65rem;
     }
 }
 @media screen and (max-width: 777px){
@@ -396,8 +408,8 @@
 		}
 .call:after{
 			content: "\2706";/*"❤";*/
-			left: 5px;
-			top: -15px;
+			left: 7px;
+			top: -5px;
             color:#f94e66!important;
             text-shadow:0px 0px 6px #f94e66!important;
 		}

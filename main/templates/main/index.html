@@ -1,4 +1,5 @@
 {% load static %}
+{% load lookup %}
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
 <head>
@@ -173,16 +174,24 @@
                         {% for type in types %}
                           {% if category.category == type.category.category %}
                                <div class="text-all">
-                               {%  with min_prices|prev:forloop.counter0 as min_price %}
-                                    <a href="{% url 'list_product' slug=type.slug_type %}" class="headtext"><span class="name-value">{{ type.typeof }} (за 1 {{ min_price.get_unit_display }})</span>
-                                        <span class="dots">.......................................................................................................................................................................................................................</span>
-                                        {% if category.is_staff %}
-                                            <span class="name-value" style="font-family: FA-solid; padding-bottom: 3px">&#xf067;&nbsp</span>
-                                        {% else %}
-                                            <span class="name-value">від&nbsp</span>
-                                        {% endif %}
-                                        <span class="price-value">₴{{ min_price.price }}</span></a>
-                                    <p class="description">{{ type.type_description }}</p>
+                               {%  with min_prices_counts_units|prev:forloop.counter0 as min_price_count_unit %}
+                                   {% for key, value in min_price_count_unit.items %}
+                                       {%  if forloop.first %}
+                                           <a href="{% url 'list_product' slug=type.slug_type %}" class="headtext"><span class="name-value">{{ type.typeof }} ({{ min_price_count_unit|lookup:'count_of_this_type' }})</span>
+                                               <span class="dots">.......................................................................................................................................................................................................................</span>
+                                               {% if category.is_staff %}
+                                                   <span class="name-value" style="font-family: FA-solid; padding-bottom: 3px">&#xf067;&nbsp</span>
+                                               {% else %}
+                                                   <span class="name-value">від&nbsp</span>
+                                               {% endif %}
+                                               <span class="price-value">₴ {{ min_price_count_unit|lookup:'min_price_of_this_type' }} </span>
+                                               {% if   min_price_count_unit|lookup:'unit_of_this_type' %}
+                                                    <span class="units">/{{ min_price_count_unit|lookup:'unit_of_this_type' }}</span>
+                                               {% endif %}
+                                           </a>
+                                           <p class="description">{{ type.type_description }}</p>
+                                       {% endif %}
+                                   {% endfor %}
                                {% endwith %}
                                </div>
                           {% endif %}
