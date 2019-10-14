@@ -186,7 +186,7 @@
                                                {% endif %}
                                                <span class="price-value">₴ {{ min_price_count_unit|lookup:'min_price_of_this_type' }} </span>
                                                {% if   min_price_count_unit|lookup:'unit_of_this_type' %}
-                                                    <span class="units">/{{ min_price_count_unit|lookup:'unit_of_this_type' }}</span>
+                                                    <span class="units">{{ min_price_count_unit|lookup:'unit_of_this_type' }}</span>
                                                {% endif %}
                                            </a>
                                            <p class="description">{{ type.type_description }}</p>
