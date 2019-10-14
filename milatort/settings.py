@@ -93,6 +93,7 @@ TEMPLATES = [
                 'orders.context_processors.get_basket_content',
             ],
             'libraries': {
+                'lookup': 'main.templatetags.lookup',
                 'previous': 'main.templatetags.previous',
                 'choose_photo': 'main.templatetags.choose_photo',
                 'discount_total': 'main.templatetags.discount_client',
