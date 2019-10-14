@@ -383,7 +383,7 @@ a:hover {
     white-space: normal;
     text-overflow: ellipsis;
 }
-a>.units{
+.text-all>a>.units{
     font-family: Raleway-ExtraLight, sans-serif;
     color: black;
     text-decoration: none;
